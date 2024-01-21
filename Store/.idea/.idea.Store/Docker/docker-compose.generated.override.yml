@@ -1,0 +1,21 @@
+# This is a generated file. Not intended for manual editing.
+version: "3.8"
+services:
+  catalog.api:
+    build:
+      context: "/Users/nataliastasiukova/Documents/NetC#Projects/store/Store"
+      dockerfile: "Catalog.Host/Dockerfile"
+      target: "base"
+    command: []
+    entrypoint:
+    - "dotnet"
+    - "/app/bin/Debug/net8.0/Catalog.Host.dll"
+    environment:
+      DOTNET_USE_POLLING_FILE_WATCHER: "true"
+    image: "catalog.host:dev"
+    ports: []
+    volumes:
+    - "/Users/nataliastasiukova/.nuget/packages:/home/app/.nuget/packages"
+    - "/Users/nataliastasiukova/Documents/NetC#Projects/store/Store/Catalog.Host:/app:rw"
+    - "/Users/nataliastasiukova/Documents/NetC#Projects/store/Store:/src:rw"
+    working_dir: "/app"
