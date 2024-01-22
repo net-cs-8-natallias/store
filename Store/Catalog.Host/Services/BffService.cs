@@ -13,22 +13,19 @@ public class BffService: IBffService
     private readonly ICatalogRepository<ItemCategory> _categoryRepository;
     private readonly ICatalogItemsRepository _itemRepository;
     private readonly ILogger<BffService> _logger;
-    private readonly IMapper _mapper;
     
 
     public BffService(ICatalogRepository<ItemBrand> brandRepository,
         ICatalogRepository<ItemType> typeRepository,
         ICatalogRepository<ItemCategory> categoryRepository,
         ICatalogItemsRepository itemRepository,
-        ILogger<BffService> logger,
-        IMapper mapper)
+        ILogger<BffService> logger)
     {
         _brandRepository = brandRepository;
         _typeRepository = typeRepository;
         _categoryRepository = categoryRepository;
         _itemRepository = itemRepository;
         _logger = logger;
-        _mapper = mapper;
     }
     
     public async Task<List<CatalogItem>> GetItems(CatalogFilter filters)
