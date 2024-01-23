@@ -1,9 +1,6 @@
-﻿// Copyright (c) Brock Allen & Dominick Baier. All rights reserved.
-// Licensed under the Apache License, Version 2.0. See LICENSE in the project root for license information.
-
-
-using IdentityServer4.Models;
+﻿using IdentityServer4.Models;
 using System.Collections.Generic;
+using Microsoft.Extensions.Configuration;
 
 namespace IdentityServer
 {
@@ -13,7 +10,8 @@ namespace IdentityServer
         {
             return new IdentityResource[]
             {
-                new IdentityResources.OpenId()
+                new IdentityResources.OpenId(),
+                new IdentityResources.Profile()
             };
         }
 
@@ -21,30 +19,30 @@ namespace IdentityServer
         {
             return new ApiResource[]
             {
-                new ApiResource("catalog")
+                new ApiResource("CatalogApi")
                 {
                     Scopes = new List<Scope>
                     {
-                        new Scope("catalogitem")
+                        new Scope("catalog")
                     }
                 }
+                
             };
         }
 
-        public static IEnumerable<Client> GetClients()
+        public static IEnumerable<Client> GetClients(IConfiguration configuration)
         {
-            return new Client[]
+            return new[]
             {
-                new Client
-                {
-                    ClientId = "catalog",
-                    AllowedGrantTypes = GrantTypes.ClientCredentials,
-                    ClientSecrets =
-                    {
-                        new Secret("secret".Sha256())
-                    }
-                    
-                },
+                // new Client
+                // {
+                //     ClientId = "ApiClient",
+                //     AllowedGrantTypes = GrantTypes.ClientCredentials,
+                //     ClientSecrets =
+                //     {
+                //         new Secret("secret".Sha256())
+                //     }
+                // },
                 new Client
                 {
                     ClientId = "catalogswaggerui",
@@ -57,10 +55,11 @@ namespace IdentityServer
 
                     AllowedScopes =
                     {
-                        "catalogitem"
+                        "catalog"
                     }
                 }
             };
         }
     }
 }
+

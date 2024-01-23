@@ -1,4 +1,3 @@
-using AutoMapper;
 using Catalog.Host.Configurations;
 using Catalog.Host.Data;
 using Catalog.Host.Data.Entities;
@@ -7,6 +6,7 @@ using Catalog.Host.Repositories.Interfaces;
 using Catalog.Host.Services;
 using Catalog.Host.Services.Interfaces;
 using Microsoft.EntityFrameworkCore;
+using Microsoft.OpenApi.Models;
 using Serilog;
 
 
@@ -18,9 +18,66 @@ Log.Logger = new LoggerConfiguration()
     .WriteTo.Console()
     .CreateLogger();
 
+builder.Services.AddSwaggerGen(options =>
+{
+    options.SwaggerDoc("v1", new OpenApiInfo
+    {
+        Title = "Store- Catalog HTTP API",
+        Description = "The Store Catalog Service HTTP API"
+    });
+    options.AddSecurityRequirement(new OpenApiSecurityRequirement
+    {
+        {
+            new OpenApiSecurityScheme
+            {
+                Reference = new OpenApiReference { Type = ReferenceType.SecurityScheme, Id = "oauth2" }
+            },
+            new[] { "catalog" }
+        }
+    });
+    options.AddSecurityDefinition("oauth2", new OpenApiSecurityScheme
+        {
+            Type = SecuritySchemeType.OAuth2,
+            Flows = new OpenApiOAuthFlows()
+            {
+                Implicit = new OpenApiOAuthFlow()
+                {
+                    AuthorizationUrl = new Uri("http://localhost:7001/connect/authorize"),
+                    TokenUrl = new Uri("http://localhost:7001/connect/token"),
+                    Scopes = new Dictionary<string, string>()
+                    {
+                        { "catalog", "Catalog Api - access to bff" },
+                    }
+                }
+            }
+        }
+    );
+});
+
+builder.Services.AddAuthentication("Bearer")
+    .AddJwtBearer("Bearer", options =>
+    {
+        // required audience of access tokens
+        options.Audience = "CatalogApi";
+        options.RequireHttpsMetadata = false;
+
+
+        // auth server base endpoint (this will be used to search for disco doc)
+        options.Authority = "http://localhost:7001";
+    });
+
+builder.Services.AddAuthorization(options =>
+{
+    options.AddPolicy("ApiScope", policy =>
+    {
+        policy.RequireAuthenticatedUser();
+        policy.RequireClaim("scope", "catalog");
+    });
+});
+
 builder.Services.AddControllers();
 builder.Services.AddEndpointsApiExplorer();
-builder.Services.AddSwaggerGen();
+
 
 builder.Services.Configure<CatalogConfigurations>(configuration);
 builder.Services.AddDbContextFactory<ApplicationDbContext>(opts => opts.UseNpgsql(configuration["ConnectionString"]));
@@ -49,7 +106,17 @@ if (app.Environment.IsDevelopment())
     app.UseSwaggerUI();
 }
 
-app.MapControllers();
+app.UseRouting();
+app.UseAuthentication();
+app.UseAuthorization();
+
+app.UseEndpoints(endpoints =>
+{
+    endpoints.MapDefaultControllerRoute().RequireAuthorization("ApiScope");
+    endpoints.MapControllers();//.RequireAuthorization -> for all controllers
+});
+
+// app.MapControllers();
 
 CreateDbIfNotExists(app);
 
@@ -59,12 +126,12 @@ Log.CloseAndFlush();
 
 IConfiguration GetConfiguration()
 {
-    var builder = new ConfigurationBuilder()
+    var builderConfig = new ConfigurationBuilder()
         .SetBasePath(Directory.GetCurrentDirectory())
         .AddJsonFile("appsettings.json", false, true)
         .AddEnvironmentVariables();
 
-    return builder.Build();
+    return builderConfig.Build();
 }
 
 void CreateDbIfNotExists(IHost host)

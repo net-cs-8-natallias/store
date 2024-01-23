@@ -1,9 +1,11 @@
 using Catalog.Host.Models;
 using Catalog.Host.Services.Interfaces;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 
 namespace Catalog.Host.Controllers;
 
+[Authorize(Policy = "ApiScope")]
 [ApiController]
 [Route("bff-controller")]
 public class BffController: ControllerBase
@@ -21,7 +23,6 @@ public class BffController: ControllerBase
     }
     
     [HttpGet("items")]
-    //[ProducesResponseType(typeof(PaginatedItems<CatalogItem>), (int)HttpStatusCode.OK)]
     public async Task<IActionResult> GetItems(int category, int type, int brand)
     {
         _logger.LogInformation(
