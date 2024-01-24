@@ -99,3 +99,5 @@ app.UseEndpoints(endpoints =>
 
 app.Run();
 
+Log.CloseAndFlush();
+

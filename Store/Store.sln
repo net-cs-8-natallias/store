@@ -6,6 +6,8 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "IdentityServer", "IdentityS
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Basket.Host", "Basket.Host\Basket.Host.csproj", "{D3F48FA6-C140-46FE-BA94-7AC042455071}"
 EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Order.Host", "Order.Host\Order.Host.csproj", "{52A3C969-86CA-4545-9A26-2816C7442F74}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -24,5 +26,9 @@ Global
 		{D3F48FA6-C140-46FE-BA94-7AC042455071}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{D3F48FA6-C140-46FE-BA94-7AC042455071}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{D3F48FA6-C140-46FE-BA94-7AC042455071}.Release|Any CPU.Build.0 = Release|Any CPU
+		{52A3C969-86CA-4545-9A26-2816C7442F74}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{52A3C969-86CA-4545-9A26-2816C7442F74}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{52A3C969-86CA-4545-9A26-2816C7442F74}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{52A3C969-86CA-4545-9A26-2816C7442F74}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 EndGlobal
