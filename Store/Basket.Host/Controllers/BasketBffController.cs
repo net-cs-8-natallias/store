@@ -2,10 +2,12 @@ using System.Net;
 using System.Security.Claims;
 using Basket.Host.Models;
 using Basket.Host.Services.Interfaces;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 
 namespace Basket.Host.Controllers;
 
+[Authorize(Policy = "ApiScope")]
 [ApiController]
 [Route("basket-bff-controller")]
 public class BasketBffController: ControllerBase
