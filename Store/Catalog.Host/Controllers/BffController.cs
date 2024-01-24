@@ -7,7 +7,7 @@ namespace Catalog.Host.Controllers;
 
 [Authorize(Policy = "ApiScope")]
 [ApiController]
-[Route("bff-controller")]
+[Route("catalog-bff-controller")]
 public class BffController: ControllerBase
 {
     private readonly ILogger<BffController> _logger;
