@@ -11,32 +11,24 @@ public class CacheService: ICacheService
     private readonly IRedisCacheConnectionService _redisCacheConnectionService;
     private readonly IOptions<RedisConfig> _config;
     private readonly ILogger<ICacheService> _logger;
-    private readonly IJsonSerializer _jsonSerializer;
         
     public CacheService(IRedisCacheConnectionService redisCacheConnectionService, 
-        IOptions<RedisConfig> config, ILogger<ICacheService> logger,
-        IJsonSerializer jsonSerializer)
+        IOptions<RedisConfig> config, ILogger<ICacheService> logger)
     {
         _redisCacheConnectionService = redisCacheConnectionService;
         _config = config;
         _logger = logger;
-        _jsonSerializer = jsonSerializer;
     }
     public async Task AddOrUpdateAsync(string userId, int itemId, int quantity)
     {
         var redis = GetRedisDatabase();
-        //HashEntry[] storedValues = await redis.HashGetAllAsync(userId);
-        // if (storedValues.Length == 0)
-        // {
-        //     redis.HashSet(userId, new HashEntry[] { new HashEntry(itemId, 1) });
-        // } else 
         if (redis.HashExists(userId, itemId))
         {
             await redis.HashIncrementAsync(userId, itemId, quantity);
         }
         else
         {
-            await redis.HashSetAsync(userId, itemId, 1);
+            await redis.HashSetAsync(userId, itemId, quantity);
         }
 
         
