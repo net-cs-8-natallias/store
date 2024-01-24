@@ -1,4 +1,4 @@
-using Catalog.Host.Data.Entities;
+using Catalog.Host.DbContextData.Entities;
 using Catalog.Host.Services.Interfaces;
 
 namespace Catalog.Host.Services;
