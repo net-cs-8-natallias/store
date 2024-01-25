@@ -3,29 +3,29 @@ using Catalog.Host.Services.Interfaces;
 
 namespace Catalog.Host.Services;
 
-public class StockService: ICatalogService<Stock>
+public class StockService: ICatalogService<Item>
 {
-    public Task<List<Stock>> GetCatalog()
+    public Task<List<Item>> GetCatalog()
     {
         throw new NotImplementedException();
     }
 
-    public Task<Stock> FindById(int id)
+    public Task<Item> FindById(int id)
     {
         throw new NotImplementedException();
     }
 
-    public Task<int?> AddToCatalog(Stock item)
+    public Task<int?> AddToCatalog(Item item)
     {
         throw new NotImplementedException();
     }
 
-    public Task<Stock> UpdateInCatalog(Stock item)
+    public Task<Item> UpdateInCatalog(Item item)
     {
         throw new NotImplementedException();
     }
 
-    public Task<Stock> RemoveFromCatalog(int id)
+    public Task<Item> RemoveFromCatalog(int id)
     {
         throw new NotImplementedException();
     }

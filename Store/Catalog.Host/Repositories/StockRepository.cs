@@ -3,29 +3,29 @@ using Catalog.Host.Repositories.Interfaces;
 
 namespace Catalog.Host.Repositories;
 
-public class StockRepository: ICatalogRepository<Stock>
+public class StockRepository: ICatalogRepository<Item>
 {
-    public Task<List<Stock>> GetCatalog()
+    public Task<List<Item>> GetCatalog()
     {
         throw new NotImplementedException();
     }
 
-    public Task<Stock> FindById(int id)
+    public Task<Item> FindById(int id)
     {
         throw new NotImplementedException();
     }
 
-    public Task<int?> AddToCatalog(Stock item)
+    public Task<int?> AddToCatalog(Item item)
     {
         throw new NotImplementedException();
     }
 
-    public Task<Stock> UpdateInCatalog(Stock item)
+    public Task<Item> UpdateInCatalog(Item item)
     {
         throw new NotImplementedException();
     }
 
-    public Task<Stock> RemoveFromCatalog(int id)
+    public Task<Item> RemoveFromCatalog(int id)
     {
         throw new NotImplementedException();
     }

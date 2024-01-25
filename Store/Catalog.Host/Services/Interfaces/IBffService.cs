@@ -5,14 +5,16 @@ namespace Catalog.Host.Services.Interfaces;
 
 public interface IBffService
 {
-    Task<List<CatalogItem>> GetItems(CatalogFilter filters);
-    Task UpdateStock(List<OrderItem> items);
-    Task<List<CatalogItem>> GetItems();
+    Task UpdateItemsStock(List<OrderItem> items);
+    Task<List<Item>> GetItemsByCatalogItemId(int catalogItemId);
+    Task<List<CatalogItem>> GetCatalogItems(CatalogFilter filters);
+    Task<List<CatalogItem>> GetCatalogItems();
     Task<List<ItemBrand>> GetBrands();
     Task<List<ItemType>> GetTypes();
     Task<List<ItemCategory>> GetCategories();
-    Task<CatalogItem> GetItem(int id);
+    Task<CatalogItem> GetCatalogItem(int id);
     Task<ItemBrand> GetBrand(int id);
     Task<ItemType> GetType(int id);
     Task<ItemCategory> GetCategory(int id);
+    
 }

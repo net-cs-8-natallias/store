@@ -4,9 +4,9 @@ using Microsoft.EntityFrameworkCore.Metadata.Builders;
 
 namespace Catalog.Host.DbContextData.EntityConfig;
 
-public class StockEntityConfiguration: IEntityTypeConfiguration<Stock>
+public class StockEntityConfiguration: IEntityTypeConfiguration<Item>
 {
-    public void Configure(EntityTypeBuilder<Stock> builder)
+    public void Configure(EntityTypeBuilder<Item> builder)
     {
         builder.ToTable("stock");
         builder.HasKey(stock => stock.Id);
@@ -15,12 +15,12 @@ public class StockEntityConfiguration: IEntityTypeConfiguration<Stock>
             .UseIdentityColumn()
             .IsRequired();
 
-        builder.HasOne(stock => stock.Item)
+        builder.HasOne(stock => stock.CatalogItem)
             .WithMany()
-            .HasForeignKey(stock => stock.ItemId);
+            .HasForeignKey(stock => stock.CatalogItemId);
 
-        builder.Property(stock => stock.ItemId)
-            .HasColumnName("item_id")
+        builder.Property(stock => stock.CatalogItemId)
+            .HasColumnName("catalog_item_id")
             .IsRequired();
 
         builder.Property(stock => stock.Quantity)

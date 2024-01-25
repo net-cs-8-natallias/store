@@ -12,16 +12,14 @@ public class ApplicationDbContext: DbContext
     }
     
     public DbSet<CatalogItem> CatalogItems { get; set; }
-    public DbSet<Item> Items { get; set; }
     public DbSet<ItemBrand> ItemBrands { get; set; }
     public DbSet<ItemCategory> ItemCategories { get; set; }
     public DbSet<ItemType> ItemTypes { get; set; }
-    public DbSet<Stock> Stocks { get; set; }
+    public DbSet<Item> Items { get; set; }
 
     protected override void OnModelCreating(ModelBuilder builder)
     {
         builder.ApplyConfiguration(new CatalogItemEntityConfiguration());
-        builder.ApplyConfiguration(new ItemEntityConfiguration());
         builder.ApplyConfiguration(new ItemBrandEntityConfiguration());
         builder.ApplyConfiguration(new ItemCategoryEntityConfiguration());
         builder.ApplyConfiguration(new ItemTypeEntityConfiguration());

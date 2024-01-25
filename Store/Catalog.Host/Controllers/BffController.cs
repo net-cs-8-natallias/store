@@ -21,44 +21,61 @@ public class BffController: ControllerBase
         _logger = logger;
         _service = service;
     }
-    
+
+    [HttpPut("items")]
+    public async Task<IActionResult> UpdateItemsStock(List<OrderItem> items)
+    {
+        _logger.LogInformation($"*{GetType().Name}* request to update items stock");
+        await _service.UpdateItemsStock(items);
+        return Ok();
+    }
+
     [HttpGet("items")]
-    public async Task<IActionResult> GetItems(int category, int type, int brand)
+    public async Task<IActionResult> GetItemsStock(int catalogItemId)
+    {
+        _logger.LogInformation($"*{GetType().Name}* request to get items by catalog-item id");
+        var items = await _service.GetItemsByCatalogItemId(catalogItemId);
+        return Ok(items);
+    }
+    
+    [HttpGet("catalog-items")]
+    public async Task<IActionResult> GetCatalogItems(int category, int type, int brand)
     {
         _logger.LogInformation(
             $"*{GetType().Name}* request to get items");
-        var catalogItems = await _service.GetItems(new CatalogFilter(){Category = category, Type = type, Brand = brand});
+        var catalogItems = await _service.GetCatalogItems(new CatalogFilter(){Category = category, Type = type, Brand = brand});
         return Ok(catalogItems);
-    }
-
-    [HttpPut("items")]
-    public async Task<IActionResult> UpdateStock(List<OrderItem> items)
-    {
-        //TODO
-        return Ok();
     }
 
     [HttpGet("brands")]
     public async Task<ActionResult> GetBrands()
     {
         _logger.LogInformation($"*{GetType().Name}* request to get all brands");
-        var catalogBrands = await _service.GetBrands();
-        return Ok(catalogBrands);
+        var brands = await _service.GetBrands();
+        return Ok(brands);
     }
 
     [HttpGet("types")]
     public async Task<ActionResult> GetTypes()
     {
         _logger.LogInformation($"*{GetType().Name}* request to get all types");
-        var catalogTypes = await _service.GetTypes();
-        return Ok(catalogTypes);
+        var types = await _service.GetTypes();
+        return Ok(types);
+    }
+    
+    [HttpGet("categories")]
+    public async Task<ActionResult> GetCategories()
+    {
+        _logger.LogInformation($"*{GetType().Name}* request to get all categories");
+        var categories = await _service.GetTypes();
+        return Ok(categories);
     }
 
-    [HttpGet("items/{id:int}")]
-    public async Task<ActionResult> GetItem(int id)
+    [HttpGet("catalog-items/{id:int}")]
+    public async Task<ActionResult> GetCatalogItem(int id)
     {
         _logger.LogInformation($"*{GetType().Name}* request to get item by id: {id}");
-        var item = await _service.GetItem(id);
+        var item = await _service.GetCatalogItem(id);
         return Ok(item);
     }
 
@@ -76,6 +93,14 @@ public class BffController: ControllerBase
         _logger.LogInformation($"*{GetType().Name}* request to get item by id: {id}");
         var item = await _service.GetType(id);
         return Ok(item);
+    }
+    
+    [HttpGet("categories/{id}")]
+    public async Task<ActionResult> GetCategory(int id)
+    {
+        _logger.LogInformation($"*{GetType().Name}* request to get category by id: {id}");
+        var category = await _service.GetType(id);
+        return Ok(category);
     }
     
 }

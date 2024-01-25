@@ -9,9 +9,9 @@ namespace Catalog.Host.Controllers;
 public class StockController: ControllerBase
 {
     private readonly ILogger<StockController> _logger;
-    private readonly ICatalogService<Stock> _service;
+    private readonly ICatalogService<Item> _service;
 
-    public StockController(ICatalogService<Stock> service,
+    public StockController(ICatalogService<Item> service,
         ILogger<StockController> logger)
     {
         _service = service;

@@ -18,6 +18,35 @@ public class CatalogItemsRepository: ICatalogItemsRepository
         _logger = logger;
     }
     
+    public async Task UpdateItemsStock(List<OrderItem> items)
+    {
+        foreach (var item in items)
+        {
+            var updatedItem = await _dbContext.Items.FindAsync(item.ItemId);
+            if (updatedItem == null)
+            {
+                throw new Exception($"Item with id: {item.ItemId} does not exist");
+            }
+
+            int quantity = updatedItem.Quantity - item.Quantity;
+            if (quantity < 0)
+            {
+                throw new Exception($"Not enough items in stock");
+            }
+
+            updatedItem.Quantity = quantity;
+            _dbContext.Update(updatedItem);
+            await _dbContext.SaveChangesAsync();
+        }
+    }
+
+    public async Task<List<Item>> GetItemsByCatalogItemId(int catalogItemId)
+    {
+        IQueryable<Item> query = _dbContext.Items;
+        query = query.Where(w => w.CatalogItemId == catalogItemId);
+        return await query.ToListAsync();
+    }
+    
     public async Task<List<CatalogItem>> GetCatalog(CatalogFilter filter)
     {
         IQueryable<CatalogItem> query = _dbContext.CatalogItems;
@@ -28,12 +57,6 @@ public class CatalogItemsRepository: ICatalogItemsRepository
         return await query.ToListAsync();
     }
 
-    public async Task UpdateStock(List<OrderItem> items)
-    {
-        //TODO
-        throw new NotImplementedException();
-    }
-    
     public async Task<List<CatalogItem>> GetCatalog()
     {
         return await _dbContext.CatalogItems.ToListAsync();

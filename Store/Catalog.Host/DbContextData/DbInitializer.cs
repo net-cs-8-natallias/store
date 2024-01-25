@@ -38,14 +38,7 @@ public static class DbInitializer
         
         if (!context.Items.Any())
         {
-            await context.Items.AddRangeAsync(GetPreconfiguredCatalogItems());
-
-            await context.SaveChangesAsync();
-        }
-        
-        if (!context.Stocks.Any())
-        {
-            await context.Stocks.AddRangeAsync(GetPreconfiguredCatalogStocks());
+            await context.Items.AddRangeAsync(GetPreconfiguredCatalogStocks());
 
             await context.SaveChangesAsync();
         }
@@ -119,32 +112,20 @@ public static class DbInitializer
         };
     }
     
-    private static IEnumerable<Item> GetPreconfiguredCatalogItems()
+    private static IEnumerable<Item> GetPreconfiguredCatalogStocks()
     {
         return new List<Item>
         {
-            new() { CatalogItemId = 1 },
-            new() { CatalogItemId = 2 },
-            new() { CatalogItemId = 3 },
-            new() { CatalogItemId = 4 },
-            new() { CatalogItemId = 5 },
-        };
-    }
-    
-    private static IEnumerable<Stock> GetPreconfiguredCatalogStocks()
-    {
-        return new List<Stock>
-        {
-            new() { ItemId = 1, Quantity = 1, Size = "s" },
-            new() { ItemId = 1, Quantity = 2, Size = "m" },
-            new() { ItemId = 2, Quantity = 1, Size = "s" },
-            new() { ItemId = 2, Quantity = 3, Size = "m" },
-            new() { ItemId = 2, Quantity = 1, Size = "l" },
-            new() { ItemId = 2, Quantity = 2, Size = "xl" },
-            new() { ItemId = 3, Quantity = 1, Size = "xs" },
-            new() { ItemId = 3, Quantity = 1, Size = "m" },
-            new() { ItemId = 3, Quantity = 1, Size = "l" },
-            new() { ItemId = 3, Quantity = 2, Size = "xl" },
+            new() { CatalogItemId = 1, Quantity = 1, Size = "s" },
+            new() { CatalogItemId = 1, Quantity = 2, Size = "m" },
+            new() { CatalogItemId = 2, Quantity = 1, Size = "s" },
+            new() { CatalogItemId = 2, Quantity = 3, Size = "m" },
+            new() { CatalogItemId = 2, Quantity = 1, Size = "l" },
+            new() { CatalogItemId = 2, Quantity = 2, Size = "xl" },
+            new() { CatalogItemId = 3, Quantity = 1, Size = "xs" },
+            new() { CatalogItemId = 3, Quantity = 1, Size = "m" },
+            new() { CatalogItemId = 3, Quantity = 1, Size = "l" },
+            new() { CatalogItemId = 3, Quantity = 2, Size = "xl" },
         };
     }
 }
