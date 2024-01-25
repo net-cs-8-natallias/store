@@ -28,7 +28,7 @@ public class OrderItemRepository: IOrderRepository<OrderItem>
         if (orderItem == null)
         {
             _logger.LogError($"*{GetType().Name}* order item with id: {id} does not exist");
-            throw new Exception($"Order Item with ID: {id} does not exist");
+            throw new Exception($"Order ItemModel with ID: {id} does not exist");
         }
 
         return orderItem;
