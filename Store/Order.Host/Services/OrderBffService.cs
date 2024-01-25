@@ -1,3 +1,4 @@
+using Namotion.Reflection;
 using Order.Host.DbContextData.Entities;
 using Order.Host.Models;
 using Order.Host.Repositories.Interfaces;
@@ -24,8 +25,16 @@ public class OrderBffService: IOrderBffService
     }
     public async Task<int?> CreateOrder(string userId)
     {
+        if (userId.HasValidNullability())
+        {
+            throw new Exception($"Unknown user");
+        }
         CatalogOrder order = new CatalogOrder() { UserId = userId, Date = DateTime.Now.ToShortDateString()};
         int? orderId = await _catalogOrderRepository.AddItem(order);
+        if (!orderId.HasValue)
+        {
+            throw new Exception($"Order was not created");
+        }
         List<ItemModel> items = await GetItemsFromBasket();
         decimal totalPrice = await AddOrderItems(items, orderId.Value);
         order.Id = orderId.Value;
@@ -55,6 +64,10 @@ public class OrderBffService: IOrderBffService
                 throw new Exception($"item with id: {item.ItemId} does not exist");
             }
             Console.WriteLine($"*** catalog: {stockItem.ToString()}");
+            if (!stockItem.CatalogItem.Price.HasValidNullability())
+            {
+                throw new Exception($"Price for item with id: {stockItem.Id} was not found");
+            }
             decimal subtotal = item.Quantity * stockItem.CatalogItem.Price;
             totalPrice += subtotal;
             await _orderItemRepository.AddItem(new()
@@ -71,6 +84,10 @@ public class OrderBffService: IOrderBffService
 
     public async Task<List<CatalogOrder>> GetOrdersByUserId(string userId)
     {
+        if (userId.HasValidNullability())
+        {
+            throw new Exception($"Unknown user");
+        }
         return await _catalogOrderRepository.GetOrdersByUserId(userId);
     }
 }

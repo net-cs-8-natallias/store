@@ -6,10 +6,10 @@ namespace Order.Host.Services;
 
 public class CatalogOrderService: IOrderService<CatalogOrder>
 {
-    private readonly IOrderRepository<CatalogOrder> _orderRepository;
+    private readonly ICatalogOrderRepository _orderRepository;
     private readonly ILogger<CatalogOrderService> _logger;
 
-    public CatalogOrderService(IOrderRepository<CatalogOrder> orderRepository,
+    public CatalogOrderService(ICatalogOrderRepository orderRepository,
         ILogger<CatalogOrderService> logger)
     {
         _orderRepository = orderRepository;
