@@ -1,32 +1,43 @@
 using Catalog.Host.DbContextData.Entities;
+using Catalog.Host.Repositories.Interfaces;
 using Catalog.Host.Services.Interfaces;
 
 namespace Catalog.Host.Services;
 
 public class TypeService: ICatalogService<ItemType>
 {
-    public Task<List<ItemType>> GetCatalog()
+    private readonly ICatalogRepository<ItemType> _typeRepository;
+    private readonly ILogger<TypeService> _logger;
+    
+
+    public TypeService(ICatalogRepository<ItemType> typeRepository,
+        ILogger<TypeService> logger)
     {
-        throw new NotImplementedException();
+        _typeRepository = typeRepository;
+        _logger = logger;
+    }
+    public async Task<List<ItemType>> GetCatalog()
+    {
+        return await _typeRepository.GetCatalog();
     }
 
-    public Task<ItemType> FindById(int id)
+    public async Task<ItemType> FindById(int id)
     {
-        throw new NotImplementedException();
+        return await _typeRepository.FindById(id);
     }
 
-    public Task<int?> AddToCatalog(ItemType item)
+    public async Task<int?> AddToCatalog(ItemType item)
     {
-        throw new NotImplementedException();
+        return await _typeRepository.AddToCatalog(item);
     }
 
-    public Task<ItemType> UpdateInCatalog(ItemType item)
+    public async Task<ItemType> UpdateInCatalog(ItemType item)
     {
-        throw new NotImplementedException();
+        return await _typeRepository.UpdateInCatalog(item);
     }
 
-    public Task<ItemType> RemoveFromCatalog(int id)
+    public async Task<ItemType> RemoveFromCatalog(int id)
     {
-        throw new NotImplementedException();
+        return await _typeRepository.RemoveFromCatalog(id);
     }
 }

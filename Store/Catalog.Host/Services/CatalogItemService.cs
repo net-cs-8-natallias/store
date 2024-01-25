@@ -1,32 +1,43 @@
 using Catalog.Host.DbContextData.Entities;
+using Catalog.Host.Repositories.Interfaces;
 using Catalog.Host.Services.Interfaces;
 
 namespace Catalog.Host.Services;
 
 public class CatalogItemService: ICatalogService<CatalogItem>
 {
-    public Task<List<CatalogItem>> GetCatalog()
+    private readonly ICatalogRepository<CatalogItem> _catalogItemRepository;
+    private readonly ILogger<CatalogItemService> _logger;
+    
+
+    public CatalogItemService(ICatalogRepository<CatalogItem> catalogItemRepository,
+        ILogger<CatalogItemService> logger)
     {
-        throw new NotImplementedException();
+        _catalogItemRepository = catalogItemRepository;
+        _logger = logger;
+    }
+    public async Task<List<CatalogItem>> GetCatalog()
+    {
+        return await _catalogItemRepository.GetCatalog();
     }
 
-    public Task<CatalogItem> FindById(int id)
+    public async Task<CatalogItem> FindById(int id)
     {
-        throw new NotImplementedException();
+        return await _catalogItemRepository.FindById(id);
     }
 
-    public Task<int?> AddToCatalog(CatalogItem item)
+    public async Task<int?> AddToCatalog(CatalogItem item)
     {
-        throw new NotImplementedException();
+        return await _catalogItemRepository.AddToCatalog(item);
     }
 
-    public Task<CatalogItem> UpdateInCatalog(CatalogItem item)
+    public async Task<CatalogItem> UpdateInCatalog(CatalogItem item)
     {
-        throw new NotImplementedException();
+        return await _catalogItemRepository.UpdateInCatalog(item);
     }
 
-    public Task<CatalogItem> RemoveFromCatalog(int id)
+    public async Task<CatalogItem> RemoveFromCatalog(int id)
     {
-        throw new NotImplementedException();
+        return await _catalogItemRepository.RemoveFromCatalog(id);
     }
 }

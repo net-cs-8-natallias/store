@@ -1,32 +1,43 @@
 using Catalog.Host.DbContextData.Entities;
+using Catalog.Host.Repositories.Interfaces;
 using Catalog.Host.Services.Interfaces;
 
 namespace Catalog.Host.Services;
 
 public class BrandService: ICatalogService<ItemBrand>
 {
-    public Task<List<ItemBrand>> GetCatalog()
+    private readonly ICatalogRepository<ItemBrand> _brandRepository;
+    private readonly ILogger<BrandService> _logger;
+    
+
+    public BrandService(ICatalogRepository<ItemBrand> brandRepository,
+        ILogger<BrandService> logger)
     {
-        throw new NotImplementedException();
+        _brandRepository = brandRepository;
+        _logger = logger;
+    }
+    public async Task<List<ItemBrand>> GetCatalog()
+    {
+        return await _brandRepository.GetCatalog();
     }
 
-    public Task<ItemBrand> FindById(int id)
+    public async Task<ItemBrand> FindById(int id)
     {
-        throw new NotImplementedException();
+        return await _brandRepository.FindById(id);
     }
 
-    public Task<int?> AddToCatalog(ItemBrand item)
+    public async Task<int?> AddToCatalog(ItemBrand item)
     {
-        throw new NotImplementedException();
+        return await _brandRepository.AddToCatalog(item);
     }
 
-    public Task<ItemBrand> UpdateInCatalog(ItemBrand item)
+    public async Task<ItemBrand> UpdateInCatalog(ItemBrand item)
     {
-        throw new NotImplementedException();
+        return await _brandRepository.UpdateInCatalog(item);
     }
 
-    public Task<ItemBrand> RemoveFromCatalog(int id)
+    public async Task<ItemBrand> RemoveFromCatalog(int id)
     {
-        throw new NotImplementedException();
+        return await _brandRepository.RemoveFromCatalog(id);
     }
 }

@@ -29,16 +29,14 @@ public class BffService: IBffService
     
     public async Task UpdateItemsStock(List<OrderItem> items)
     {
-        // TODO
-        _logger.LogInformation($"");
         await _itemRepository.UpdateItemsStock(items);
+        _logger.LogInformation($"stock items was updated with: {items.Count} items");
     }
 
     public async Task<List<Item>> GetItemsByCatalogItemId(int catalogItemId)
     {
         var items = await _itemRepository.GetItemsByCatalogItemId(catalogItemId);
-        // TODO
-        _logger.LogInformation($"");
+        _logger.LogInformation($"found: {items.Count} items with catalog item id: {catalogItemId}");
         return items;
     }
     

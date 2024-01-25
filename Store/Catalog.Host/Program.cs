@@ -93,7 +93,7 @@ builder.Services.AddTransient<ICatalogService<ItemBrand>, BrandService>();
 builder.Services.AddTransient<ICatalogService<ItemType>, TypeService>();
 builder.Services.AddTransient<ICatalogService<ItemCategory>, CategoryService>();
 builder.Services.AddTransient<ICatalogService<CatalogItem>, CatalogItemService>();
-builder.Services.AddTransient<ICatalogService<Item>, StockService>();
+builder.Services.AddTransient<ICatalogService<Item>, ItemService>();
 
 
 var app = builder.Build();
