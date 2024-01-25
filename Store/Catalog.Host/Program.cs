@@ -86,7 +86,7 @@ builder.Services.AddTransient<ICatalogRepository<ItemBrand>, BrandsRepository>()
 builder.Services.AddTransient<ICatalogRepository<ItemType>, TypeRepository>();
 builder.Services.AddTransient<ICatalogRepository<ItemCategory>, CategoryRepository>();
 builder.Services.AddTransient<ICatalogItemsRepository, CatalogItemsRepository>();
-builder.Services.AddTransient<ICatalogRepository<Item>, StockRepository>();
+builder.Services.AddTransient<ICatalogRepository<Item>, ItemRepository>();
 
 builder.Services.AddTransient<IBffService, BffService>();
 builder.Services.AddTransient<ICatalogService<ItemBrand>, BrandService>();

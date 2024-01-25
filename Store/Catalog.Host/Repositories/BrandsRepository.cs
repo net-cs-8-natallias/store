@@ -1,32 +1,59 @@
+using Catalog.Host.DbContextData;
 using Catalog.Host.DbContextData.Entities;
 using Catalog.Host.Repositories.Interfaces;
+using Microsoft.EntityFrameworkCore;
 
 namespace Catalog.Host.Repositories;
 
 public class BrandsRepository: ICatalogRepository<ItemBrand>
 {
-    public Task<List<ItemBrand>> GetCatalog()
+    private readonly ApplicationDbContext _dbContext;
+    private readonly ILogger<BrandsRepository> _logger;
+
+    public BrandsRepository(ApplicationDbContext dbContext,
+        ILogger<BrandsRepository> logger)
     {
-        throw new NotImplementedException();
+        _dbContext = dbContext;
+        _logger = logger;
+    }
+    public async Task<List<ItemBrand>> GetCatalog()
+    {
+        return await _dbContext.ItemBrands.ToListAsync();
     }
 
-    public Task<ItemBrand> FindById(int id)
+    public async Task<ItemBrand> FindById(int id)
     {
-        throw new NotImplementedException();
+        var brand = await _dbContext.ItemBrands.FindAsync(id);
+        if (brand == null)
+        {
+            _logger.LogError($"*{GetType().Name}* brand with id: {id} does not exist");
+            throw new Exception($"Brand with ID: {id} does not exist");
+        }
+
+        return brand;
     }
 
-    public Task<int?> AddToCatalog(ItemBrand item)
+    public async Task<int?> AddToCatalog(ItemBrand item)
     {
-        throw new NotImplementedException();
+        var newBrand = await _dbContext.ItemBrands.AddAsync(item);
+        await _dbContext.SaveChangesAsync();
+        return newBrand.Entity.Id;
     }
 
-    public Task<ItemBrand> UpdateInCatalog(ItemBrand item)
+    public async Task<ItemBrand> UpdateInCatalog(ItemBrand item)
     {
-        throw new NotImplementedException();
+        var newBrand = await FindById(item.Id);
+        newBrand.Brand = item.Brand;
+        newBrand = _dbContext.ItemBrands.Update(newBrand).Entity;
+        await _dbContext.SaveChangesAsync();
+        return newBrand;
     }
 
-    public Task<ItemBrand> RemoveFromCatalog(int id)
+    public async Task<ItemBrand> RemoveFromCatalog(int id)
     {
-        throw new NotImplementedException();
+        var brand = await FindById(id);
+        _dbContext.ItemBrands.Remove(brand);
+        await _dbContext.SaveChangesAsync();
+        return brand;
     }
 }
