@@ -25,7 +25,7 @@ public class OrderBffService: IOrderBffService
     }
     public async Task<int?> CreateOrder(string userId)
     {
-        if (userId.HasValidNullability())
+        if (!userId.HasValidNullability())
         {
             throw new Exception($"Unknown user");
         }
@@ -35,7 +35,7 @@ public class OrderBffService: IOrderBffService
         {
             throw new Exception($"Order was not created");
         }
-        List<ItemModel> items = await GetItemsFromBasket();
+        List<ItemModel> items = await GetItemsFromBasket(userId);
         decimal totalPrice = await AddOrderItems(items, orderId.Value);
         order.Id = orderId.Value;
         order.TotalPrice = totalPrice;
@@ -43,10 +43,10 @@ public class OrderBffService: IOrderBffService
         return orderId.Value;
     }
 
-    private async Task<List<ItemModel>> GetItemsFromBasket()
+    private async Task<List<ItemModel>> GetItemsFromBasket(string userId)
     {
         var items =  await _httpClient.SendAsync<List<ItemModel>, object>(
-            $"http://localhost:5286/basket-bff-controller/items", 
+            $"http://localhost:5286/basket-bff-controller/items?userId={userId}", 
             HttpMethod.Get, null);
         return items;
     }
@@ -84,7 +84,7 @@ public class OrderBffService: IOrderBffService
 
     public async Task<List<CatalogOrder>> GetOrdersByUserId(string userId)
     {
-        if (userId.HasValidNullability())
+        if (!userId.HasValidNullability())
         {
             throw new Exception($"Unknown user");
         }

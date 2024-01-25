@@ -1,9 +1,12 @@
 using System.Security.Claims;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Order.Host.Services.Interfaces;
 
 namespace Order.Host.Controllers;
 
+
+[Authorize(Policy = "ApiScope")]
 [ApiController]
 [Route("order-bff-controller")]
 public class OrderBffController: ControllerBase
@@ -18,9 +21,6 @@ public class OrderBffController: ControllerBase
         _service = service;
     }  
     
-    // Task<int?> CreateOrder(string userId);
-    // Task<List<CatalogOrder>> GetOrdersByUserId(string userId);
-
     [HttpPost("orders")]
     public async Task<IActionResult> CreateOrder()
     {

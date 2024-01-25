@@ -43,6 +43,7 @@ public class CatalogOrderRepository: ICatalogOrderRepository
     public async Task<int?> AddItem(CatalogOrder item)
     {
         var newOrder = await _dbContext.CatalogOrders.AddAsync(item);
+        await _dbContext.SaveChangesAsync();
         return newOrder.Entity.Id;
     }
 

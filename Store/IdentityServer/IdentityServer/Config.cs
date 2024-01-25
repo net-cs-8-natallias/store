@@ -25,11 +25,19 @@ namespace IdentityServer
                     {
                         new Scope("catalog")
                     }
-                }, new ApiResource("BasketApi")
+                }, 
+                new ApiResource("BasketApi")
                 {
                     Scopes = new List<Scope>
                     {
                         new Scope("basket")
+                    }
+                }, 
+                new ApiResource("OrderApi")
+                {
+                    Scopes = new List<Scope>
+                    {
+                        new Scope("order")
                     }
                 }
                 
@@ -40,15 +48,20 @@ namespace IdentityServer
         {
             return new[]
             {
-                // new Client
-                // {
-                //     ClientId = "ApiClient",
-                //     AllowedGrantTypes = GrantTypes.ClientCredentials,
-                //     ClientSecrets =
-                //     {
-                //         new Secret("secret".Sha256())
-                //     }
-                // },
+                new Client
+                {
+                    ClientId = "OrderClient",
+                    AllowedGrantTypes = GrantTypes.ClientCredentials,
+                    ClientSecrets =
+                    {
+                        new Secret("secret".Sha256())
+                    },
+                    AllowedScopes =
+                    {
+                        "basket", "catalog"
+                    }
+                    
+                },
                 new Client
                 {
                     ClientId = "catalogswaggerui",
@@ -77,6 +90,21 @@ namespace IdentityServer
                     AllowedScopes =
                     {
                         "basket"
+                    }
+                },
+                new Client
+                {
+                    ClientId = "orderswaggerui",
+                    ClientName = "Order Swagger UI",
+                    AllowedGrantTypes = GrantTypes.Implicit,
+                    AllowAccessTokensViaBrowser = true,
+
+                    RedirectUris = { $"http://localhost:5230/swagger/oauth2-redirect.html" },
+                    PostLogoutRedirectUris = { $"http://localhost:5230/swagger/" },
+
+                    AllowedScopes =
+                    {
+                        "order"
                     }
                 }
             };

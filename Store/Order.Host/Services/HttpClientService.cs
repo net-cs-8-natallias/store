@@ -1,4 +1,5 @@
 using System.Text;
+using IdentityModel.Client;
 using Newtonsoft.Json;
 using Order.Host.Services.Interfaces;
 
@@ -18,7 +19,7 @@ public class HttpClientService: IHttpClientService
     public async Task<TResponse> SendAsync<TResponse, TRequest>(string url, HttpMethod method, TRequest? content)
     {
         var client = _clientFactory.CreateClient();
-        //client.SetBearerToken(await GetClientCredentialsTokenAsync());
+        client.SetBearerToken(await GetClientCredentialsTokenAsync());
 
         var httpMessage = new HttpRequestMessage();
         httpMessage.RequestUri = new Uri(url);
@@ -38,38 +39,38 @@ public class HttpClientService: IHttpClientService
         return default !;
     }
     
-    // private async Task<string> GetClientCredentialsTokenAsync()
-    // {
-    //     var client = _clientFactory.CreateClient();
-    //     var tokenResponse = await client
-    //         .RequestClientCredentialsTokenAsync(new ClientCredentialsTokenRequest
-    //         {
-    //             Address = await GetDiscoveryDocumentAsync(),
-    //             ClientId = "order",
-    //             ClientSecret = "secret",
-    //             Scope = "catalog.catalogitem"
-    //         });
-    //
-    //     if (tokenResponse.IsError)
-    //     {
-    //         throw new Exception(
-    //             $"RequestClientCredentialsTokenAsync faild with the following error: {tokenResponse.Error}", tokenResponse.Exception);
-    //     }
-    //
-    //     return tokenResponse.AccessToken;
-    // }
-    //
-    // private async Task<string>? GetDiscoveryDocumentAsync()
-    // {
-    //     var client = _clientFactory.CreateClient();
-    //     var discoveryDocument = await client
-    //         .GetDiscoveryDocumentAsync("http://localhost:7001");
-    //     if (discoveryDocument.IsError)
-    //     {
-    //         Console.WriteLine(discoveryDocument.Error);
-    //         return string.Empty;
-    //     }
-    //
-    //     return discoveryDocument.TokenEndpoint;
-    // }
+    private async Task<string> GetClientCredentialsTokenAsync()
+    {
+        var client = _clientFactory.CreateClient();
+        var tokenResponse = await client
+            .RequestClientCredentialsTokenAsync(new ClientCredentialsTokenRequest
+            {
+                Address = await GetDiscoveryDocumentAsync(),
+                ClientId = "OrderClient",
+                ClientSecret = "secret",
+                Scope = "basket catalog"
+            });
+    
+        if (tokenResponse.IsError)
+        {
+            throw new Exception(
+                $"RequestClientCredentialsTokenAsync faild with the following error: {tokenResponse.Error}", tokenResponse.Exception);
+        }
+    
+        return tokenResponse.AccessToken;
+    }
+    
+    private async Task<string>? GetDiscoveryDocumentAsync()
+    {
+        var client = _clientFactory.CreateClient();
+        var discoveryDocument = await client
+            .GetDiscoveryDocumentAsync("http://localhost:7001");
+        if (discoveryDocument.IsError)
+        {
+            Console.WriteLine(discoveryDocument.Error);
+            return string.Empty;
+        }
+    
+        return discoveryDocument.TokenEndpoint;
+    }
 }

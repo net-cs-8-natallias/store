@@ -43,9 +43,12 @@ public class BasketBffController: ControllerBase
 
     [HttpGet("items")]
     [ProducesResponseType((int)HttpStatusCode.OK)]
-    public async Task<IActionResult> Get()
+    public async Task<IActionResult> Get(string userId = null)
     {
-        var userId = User.FindFirst(ClaimTypes.NameIdentifier)?.Value;
+        if (userId == null)
+        {
+            userId = User.FindFirst(ClaimTypes.NameIdentifier)?.Value;
+        }
         var response = await _basketService.GetItems(userId!);
         return Ok(response);
     }
