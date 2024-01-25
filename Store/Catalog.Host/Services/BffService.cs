@@ -1,5 +1,4 @@
-using AutoMapper;
-using Catalog.Host.Data.Entities;
+using Catalog.Host.DbContextData.Entities;
 using Catalog.Host.Models;
 using Catalog.Host.Repositories.Interfaces;
 using Catalog.Host.Services.Interfaces;
@@ -28,20 +27,27 @@ public class BffService: IBffService
         _logger = logger;
     }
     
-    public async Task<List<CatalogItem>> GetItems(CatalogFilter filters)
+    public async Task UpdateItemsStock(List<OrderItem> items)
+    {
+        await _itemRepository.UpdateItemsStock(items);
+        _logger.LogInformation($"stock items was updated with: {items.Count} items");
+    }
+
+    public async Task<List<Item>> GetItemsByCatalogItemId(int catalogItemId)
+    {
+        var items = await _itemRepository.GetItemsByCatalogItemId(catalogItemId);
+        _logger.LogInformation($"found: {items.Count} items with catalog item id: {catalogItemId}");
+        return items;
+    }
+    
+    public async Task<List<CatalogItem>> GetCatalogItems(CatalogFilter filters)
     {
         var items = await _itemRepository.GetCatalog(filters);
         _logger.LogDebug($"*{GetType().Name}* found {items.Count} items");
         return items;
     }
 
-    public async Task UpdateStock(List<OrderItem> items)
-    {
-        //TODO
-        throw new NotImplementedException();
-    }
-
-    public async Task<List<CatalogItem>> GetItems()
+    public async Task<List<CatalogItem>> GetCatalogItems()
     {
         var items = await _itemRepository.GetCatalog();
         _logger.LogDebug($"*{GetType().Name}* found {items.Count} items");
@@ -70,7 +76,7 @@ public class BffService: IBffService
         return categories;
     }
 
-    public async Task<CatalogItem> GetItem(int id)
+    public async Task<CatalogItem> GetCatalogItem(int id)
     {
         var item = await _itemRepository.FindById(id);
         _logger.LogDebug($"*{GetType().Name}* found item: {item}");

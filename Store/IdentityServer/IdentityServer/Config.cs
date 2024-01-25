@@ -1,9 +1,6 @@
-﻿// Copyright (c) Brock Allen & Dominick Baier. All rights reserved.
-// Licensed under the Apache License, Version 2.0. See LICENSE in the project root for license information.
-
-
-using IdentityServer4.Models;
+﻿using IdentityServer4.Models;
 using System.Collections.Generic;
+using Microsoft.Extensions.Configuration;
 
 namespace IdentityServer
 {
@@ -13,7 +10,8 @@ namespace IdentityServer
         {
             return new IdentityResource[]
             {
-                new IdentityResources.OpenId()
+                new IdentityResources.OpenId(),
+                new IdentityResources.Profile()
             };
         }
 
@@ -21,27 +19,46 @@ namespace IdentityServer
         {
             return new ApiResource[]
             {
-                new ApiResource("catalog")
+                new ApiResource("CatalogApi")
                 {
                     Scopes = new List<Scope>
                     {
-                        new Scope("catalogitem")
+                        new Scope("catalog")
+                    }
+                }, 
+                new ApiResource("BasketApi")
+                {
+                    Scopes = new List<Scope>
+                    {
+                        new Scope("basket")
+                    }
+                }, 
+                new ApiResource("OrderApi")
+                {
+                    Scopes = new List<Scope>
+                    {
+                        new Scope("order")
                     }
                 }
+                
             };
         }
 
-        public static IEnumerable<Client> GetClients()
+        public static IEnumerable<Client> GetClients(IConfiguration configuration)
         {
-            return new Client[]
+            return new[]
             {
                 new Client
                 {
-                    ClientId = "catalog",
+                    ClientId = "OrderClient",
                     AllowedGrantTypes = GrantTypes.ClientCredentials,
                     ClientSecrets =
                     {
                         new Secret("secret".Sha256())
+                    },
+                    AllowedScopes =
+                    {
+                        "basket", "catalog"
                     }
                     
                 },
@@ -57,10 +74,41 @@ namespace IdentityServer
 
                     AllowedScopes =
                     {
-                        "catalogitem"
+                        "catalog"
+                    }
+                },
+                new Client
+                {
+                    ClientId = "basketswaggerui",
+                    ClientName = "Basket Swagger UI",
+                    AllowedGrantTypes = GrantTypes.Implicit,
+                    AllowAccessTokensViaBrowser = true,
+
+                    RedirectUris = { $"http://localhost:5286/swagger/oauth2-redirect.html" },
+                    PostLogoutRedirectUris = { $"http://localhost:5286/swagger/" },
+
+                    AllowedScopes =
+                    {
+                        "basket"
+                    }
+                },
+                new Client
+                {
+                    ClientId = "orderswaggerui",
+                    ClientName = "Order Swagger UI",
+                    AllowedGrantTypes = GrantTypes.Implicit,
+                    AllowAccessTokensViaBrowser = true,
+
+                    RedirectUris = { $"http://localhost:5230/swagger/oauth2-redirect.html" },
+                    PostLogoutRedirectUris = { $"http://localhost:5230/swagger/" },
+
+                    AllowedScopes =
+                    {
+                        "order"
                     }
                 }
             };
         }
     }
 }
+

@@ -1,32 +1,59 @@
-using Catalog.Host.Data.Entities;
+using Catalog.Host.DbContextData;
+using Catalog.Host.DbContextData.Entities;
 using Catalog.Host.Repositories.Interfaces;
+using Microsoft.EntityFrameworkCore;
 
 namespace Catalog.Host.Repositories;
 
 public class CategoryRepository: ICatalogRepository<ItemCategory>
 {
-    public Task<List<ItemCategory>> GetCatalog()
+    private readonly ApplicationDbContext _dbContext;
+    private readonly ILogger<CategoryRepository> _logger;
+
+    public CategoryRepository(ApplicationDbContext dbContext,
+        ILogger<CategoryRepository> logger)
     {
-        throw new NotImplementedException();
+        _dbContext = dbContext;
+        _logger = logger;
+    }
+    public async Task<List<ItemCategory>> GetCatalog()
+    {
+        return await _dbContext.ItemCategories.ToListAsync();
     }
 
-    public Task<ItemCategory> FindById(int id)
+    public async Task<ItemCategory> FindById(int id)
     {
-        throw new NotImplementedException();
+        var category = await _dbContext.ItemCategories.FindAsync(id);
+        if (category == null)
+        {
+            _logger.LogError($"*{GetType().Name}* category with id: {id} does not exist");
+            throw new Exception($"Category with ID: {id} does not exist");
+        }
+
+        return category;
     }
 
-    public Task<int?> AddToCatalog(ItemCategory item)
+    public async Task<int?> AddToCatalog(ItemCategory item)
     {
-        throw new NotImplementedException();
+        var newCategory = await _dbContext.ItemCategories.AddAsync(item);
+        await _dbContext.SaveChangesAsync();
+        return newCategory.Entity.Id;
     }
 
-    public Task<ItemCategory> UpdateInCatalog(ItemCategory item)
+    public async Task<ItemCategory> UpdateInCatalog(ItemCategory item)
     {
-        throw new NotImplementedException();
+        var newCategory = await FindById(item.Id);
+        newCategory.Category = item.Category;
+        newCategory = _dbContext.ItemCategories.Update(newCategory).Entity;
+        await _dbContext.SaveChangesAsync();
+        return newCategory;
     }
 
-    public Task<ItemCategory> RemoveFromCatalog(int id)
+    public async Task<ItemCategory> RemoveFromCatalog(int id)
     {
-        throw new NotImplementedException();
+        var category = await FindById(id);
+        _dbContext.ItemCategories.Remove(category);
+        await _dbContext.SaveChangesAsync();
+        return category;
     }
 }
