@@ -6,11 +6,11 @@ namespace Catalog.Host.Services;
 
 public class ItemService: ICatalogService<Item>
 {
-    private readonly ICatalogRepository<Item> _itemRepository;
+    private readonly IItemRepository _itemRepository;
     private readonly ILogger<ItemService> _logger;
     
 
-    public ItemService(ICatalogRepository<Item> itemRepository,
+    public ItemService(IItemRepository itemRepository,
         ILogger<ItemService> logger)
     {
         _itemRepository = itemRepository;

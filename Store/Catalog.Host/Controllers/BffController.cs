@@ -22,7 +22,7 @@ public class BffController: ControllerBase
         _service = service;
     }
 
-    [HttpPut("items")]
+    [HttpPut("items/stock")]
     public async Task<IActionResult> UpdateItemsStock(List<OrderItem> items)
     {
         _logger.LogInformation($"*{GetType().Name}* request to update items stock");
@@ -30,10 +30,10 @@ public class BffController: ControllerBase
         return Ok();
     }
 
-    [HttpGet("items")]
+    [HttpGet("items/stock")]
     public async Task<IActionResult> GetItemsStock(int catalogItemId)
     {
-        _logger.LogInformation($"*{GetType().Name}* request to get items by catalog-item id");
+        _logger.LogInformation($"*{GetType().Name}* request to get catalog items by catalog-item id");
         var items = await _service.GetItemsByCatalogItemId(catalogItemId);
         return Ok(items);
     }
@@ -42,8 +42,17 @@ public class BffController: ControllerBase
     public async Task<IActionResult> GetCatalogItems(int category, int type, int brand)
     {
         _logger.LogInformation(
-            $"*{GetType().Name}* request to get items");
+            $"*{GetType().Name}* request to get catalog items");
         var catalogItems = await _service.GetCatalogItems(new CatalogFilter(){Category = category, Type = type, Brand = brand});
+        return Ok(catalogItems);
+    }
+    
+    [HttpGet("items")]
+    public async Task<IActionResult> GetItems()
+    {
+        _logger.LogInformation(
+            $"*{GetType().Name}* request to get items");
+        var catalogItems = await _service.GetItems();
         return Ok(catalogItems);
     }
 
@@ -74,8 +83,16 @@ public class BffController: ControllerBase
     [HttpGet("catalog-items/{id:int}")]
     public async Task<ActionResult> GetCatalogItem(int id)
     {
-        _logger.LogInformation($"*{GetType().Name}* request to get item by id: {id}");
+        _logger.LogInformation($"*{GetType().Name}* request to get catalog item by id: {id}");
         var item = await _service.GetCatalogItem(id);
+        return Ok(item);
+    }
+    
+    [HttpGet("items/{id:int}")]
+    public async Task<ActionResult> GetItem(int id)
+    {
+        _logger.LogInformation($"*{GetType().Name}* request to get item by id: {id}");
+        var item = await _service.GetItem(id);
         return Ok(item);
     }
 

@@ -10,19 +10,22 @@ public class BffService: IBffService
     private readonly ICatalogRepository<ItemBrand> _brandRepository;
     private readonly ICatalogRepository<ItemType> _typeRepository;
     private readonly ICatalogRepository<ItemCategory> _categoryRepository;
-    private readonly ICatalogItemsRepository _itemRepository;
+    private readonly IItemRepository _itemRepository;
+    private readonly ICatalogItemRepository _catalogItemRepository;
     private readonly ILogger<BffService> _logger;
     
 
     public BffService(ICatalogRepository<ItemBrand> brandRepository,
         ICatalogRepository<ItemType> typeRepository,
         ICatalogRepository<ItemCategory> categoryRepository,
-        ICatalogItemsRepository itemRepository,
+        IItemRepository itemRepository,
+        ICatalogItemRepository catalogItemRepository,
         ILogger<BffService> logger)
     {
         _brandRepository = brandRepository;
         _typeRepository = typeRepository;
         _categoryRepository = categoryRepository;
+        _catalogItemRepository = catalogItemRepository;
         _itemRepository = itemRepository;
         _logger = logger;
     }
@@ -42,17 +45,24 @@ public class BffService: IBffService
     
     public async Task<List<CatalogItem>> GetCatalogItems(CatalogFilter filters)
     {
-        var items = await _itemRepository.GetCatalog(filters);
+        var items = await _catalogItemRepository.GetCatalog(filters);
         _logger.LogDebug($"*{GetType().Name}* found {items.Count} items");
         return items;
     }
 
     public async Task<List<CatalogItem>> GetCatalogItems()
     {
+        var items = await _catalogItemRepository.GetCatalog();
+        _logger.LogDebug($"*{GetType().Name}* found {items.Count} catalog items");
+        return items;
+
+    }
+
+    public async Task<List<Item>> GetItems()
+    {
         var items = await _itemRepository.GetCatalog();
         _logger.LogDebug($"*{GetType().Name}* found {items.Count} items");
         return items;
-
     }
 
     public async Task<List<ItemBrand>> GetBrands()
@@ -77,6 +87,13 @@ public class BffService: IBffService
     }
 
     public async Task<CatalogItem> GetCatalogItem(int id)
+    {
+        var item = await _catalogItemRepository.FindById(id);
+        _logger.LogDebug($"*{GetType().Name}* found catalog item: {item}");
+        return item;
+    }
+    
+    public async Task<Item> GetItem(int id)
     {
         var item = await _itemRepository.FindById(id);
         _logger.LogDebug($"*{GetType().Name}* found item: {item}");
@@ -103,4 +120,5 @@ public class BffService: IBffService
         _logger.LogDebug($"*{GetType().Name}* found category: {category}");
         return category;
     }
+    
 }

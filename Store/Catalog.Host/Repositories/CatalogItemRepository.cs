@@ -6,45 +6,16 @@ using Microsoft.EntityFrameworkCore;
 
 namespace Catalog.Host.Repositories;
 
-public class CatalogItemsRepository: ICatalogItemsRepository
+public class CatalogItemRepository: ICatalogItemRepository
 {
     private readonly ApplicationDbContext _dbContext;
-    private readonly ILogger<CatalogItemsRepository> _logger;
+    private readonly ILogger<CatalogItemRepository> _logger;
 
-    public CatalogItemsRepository(ApplicationDbContext dbContext,
-        ILogger<CatalogItemsRepository> logger)
+    public CatalogItemRepository(ApplicationDbContext dbContext,
+        ILogger<CatalogItemRepository> logger)
     {
         _dbContext = dbContext;
         _logger = logger;
-    }
-    
-    public async Task UpdateItemsStock(List<OrderItem> items)
-    {
-        foreach (var item in items)
-        {
-            var updatedItem = await _dbContext.Items.FindAsync(item.ItemId);
-            if (updatedItem == null)
-            {
-                throw new Exception($"Item with id: {item.ItemId} does not exist");
-            }
-
-            int quantity = updatedItem.Quantity - item.Quantity;
-            if (quantity < 0)
-            {
-                throw new Exception($"Not enough items in stock");
-            }
-
-            updatedItem.Quantity = quantity;
-            _dbContext.Update(updatedItem);
-            await _dbContext.SaveChangesAsync();
-        }
-    }
-
-    public async Task<List<Item>> GetItemsByCatalogItemId(int catalogItemId)
-    {
-        IQueryable<Item> query = _dbContext.Items;
-        query = query.Where(w => w.CatalogItemId == catalogItemId);
-        return await query.ToListAsync();
     }
     
     public async Task<List<CatalogItem>> GetCatalog(CatalogFilter filter)

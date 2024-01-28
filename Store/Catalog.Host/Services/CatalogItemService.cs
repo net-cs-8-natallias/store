@@ -6,38 +6,38 @@ namespace Catalog.Host.Services;
 
 public class CatalogItemService: ICatalogService<CatalogItem>
 {
-    private readonly ICatalogRepository<CatalogItem> _catalogItemRepository;
+    private readonly ICatalogItemRepository _itemRepository;
     private readonly ILogger<CatalogItemService> _logger;
     
 
-    public CatalogItemService(ICatalogRepository<CatalogItem> catalogItemRepository,
+    public CatalogItemService(ICatalogItemRepository itemRepository,
         ILogger<CatalogItemService> logger)
     {
-        _catalogItemRepository = catalogItemRepository;
+        _itemRepository = itemRepository;
         _logger = logger;
     }
     public async Task<List<CatalogItem>> GetCatalog()
     {
-        return await _catalogItemRepository.GetCatalog();
+        return await _itemRepository.GetCatalog();
     }
 
     public async Task<CatalogItem> FindById(int id)
     {
-        return await _catalogItemRepository.FindById(id);
+        return await _itemRepository.FindById(id);
     }
 
     public async Task<int?> AddToCatalog(CatalogItem item)
     {
-        return await _catalogItemRepository.AddToCatalog(item);
+        return await _itemRepository.AddToCatalog(item);
     }
 
     public async Task<CatalogItem> UpdateInCatalog(CatalogItem item)
     {
-        return await _catalogItemRepository.UpdateInCatalog(item);
+        return await _itemRepository.UpdateInCatalog(item);
     }
 
     public async Task<CatalogItem> RemoveFromCatalog(int id)
     {
-        return await _catalogItemRepository.RemoveFromCatalog(id);
+        return await _itemRepository.RemoveFromCatalog(id);
     }
 }

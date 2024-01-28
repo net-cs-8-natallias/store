@@ -37,12 +37,24 @@ public class OrderBffService: IOrderBffService
         }
         List<ItemModel> items = await GetItemsFromBasket(userId);
         decimal totalPrice = await AddOrderItems(items, orderId.Value);
+        int totalQuantity = items.Sum(item => item.Quantity);
         order.Id = orderId.Value;
         order.TotalPrice = totalPrice;
+        order.TotalQuantity = totalQuantity;
         await _catalogOrderRepository.UpdateItem(order);
+        UpdateBasket();
+        UpdateCatalog();
         return orderId.Value;
     }
 
+    private async Task UpdateCatalog()
+    {
+        // TODO
+    }
+    private async Task UpdateBasket()
+    {
+        // TODO
+    }
     private async Task<List<ItemModel>> GetItemsFromBasket(string userId)
     {
         var items =  await _httpClient.SendAsync<List<ItemModel>, object>(
@@ -57,7 +69,7 @@ public class OrderBffService: IOrderBffService
         foreach (var item in orderItemsModel)
         {
             var stockItem = await _httpClient.SendAsync<ItemEntityModel, object>(
-                $"http://localhost:5288/catalog-bff-controller/items?catalogItemId={item.ItemId}", 
+                $"http://localhost:5288/catalog-bff-controller/items/{item.ItemId}", 
                 HttpMethod.Get, null);
             if (stockItem == null)
             {
