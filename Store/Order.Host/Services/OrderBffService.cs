@@ -42,18 +42,22 @@ public class OrderBffService: IOrderBffService
         order.TotalPrice = totalPrice;
         order.TotalQuantity = totalQuantity;
         await _catalogOrderRepository.UpdateItem(order);
-        UpdateBasket();
-        UpdateCatalog();
+        await UpdateBasket(userId);
+        await UpdateCatalog(items);
         return orderId.Value;
     }
 
-    private async Task UpdateCatalog()
+    private async Task UpdateCatalog(List<ItemModel> items)
     {
-        // TODO
+        await _httpClient.SendAsync<List<ItemModel>, object>(
+            $"http://localhost:5288/catalog-bff-controller/items/stock", 
+            HttpMethod.Put, items);
     }
-    private async Task UpdateBasket()
+    private async Task UpdateBasket(string userId)
     {
-        // TODO
+        await _httpClient.SendAsync<List<ItemModel>, object>(
+            $"http://localhost:5286/basket-bff-controller/items?userId={userId}", 
+            HttpMethod.Delete, null);
     }
     private async Task<List<ItemModel>> GetItemsFromBasket(string userId)
     {

@@ -54,7 +54,6 @@ public class ItemRepository: IItemRepository
 
     public async Task<Item> FindById(int id)
     {
-        // var item = await _dbContext.Items.FindAsync(id);
         var item = await _dbContext.Items
             .Include(i => i.CatalogItem)
             .FirstOrDefaultAsync(i => i.Id == id);
