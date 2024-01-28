@@ -31,6 +31,14 @@ services:
     container_name: lde.redis
     ports:
         - 6379:6379
+  nginx:
+    image: nginx
+    container_name: lde.nginx
+    ports:
+      - 80:80
+    volumes:
+      - ./Proxy/gateway/nginx/conf.d:/etc/nginx/conf.d
+      - ./Proxy/assets:/var/www/assets
 
 networks:
   default:
