@@ -4,7 +4,7 @@ using Microsoft.EntityFrameworkCore.Metadata.Builders;
 
 namespace Catalog.Host.DbContextData.EntityConfig;
 
-public class StockEntityConfiguration: IEntityTypeConfiguration<Item>
+public class ItemEntityConfiguration: IEntityTypeConfiguration<Item>
 {
     public void Configure(EntityTypeBuilder<Item> builder)
     {
@@ -29,6 +29,7 @@ public class StockEntityConfiguration: IEntityTypeConfiguration<Item>
 
         builder.Property(stock => stock.Size)
             .HasColumnName("size")
+            .HasMaxLength(50)
             .IsRequired();
     }
 }

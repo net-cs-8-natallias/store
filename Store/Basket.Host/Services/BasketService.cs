@@ -34,4 +34,9 @@ public class BasketService: IBasketService
         return itemsList;
        
     }
+
+    public async Task RemoveAll(string userId)
+    {
+        await _cacheService.RemoveAllAsync(userId);
+    }
 }

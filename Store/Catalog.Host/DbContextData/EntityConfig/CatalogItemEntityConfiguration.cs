@@ -39,7 +39,8 @@ public class CatalogItemEntityConfiguration: IEntityTypeConfiguration<CatalogIte
             .IsRequired();
 
         builder.Property(item => item.Image)
-            .HasColumnName("image");
+            .HasColumnName("image")
+            .HasMaxLength(150);;
 
         builder.HasOne(item => item.ItemCategory)
             .WithMany()
@@ -49,6 +50,7 @@ public class CatalogItemEntityConfiguration: IEntityTypeConfiguration<CatalogIte
             .HasColumnName("category_id");
 
         builder.Property(item => item.Description)
-            .HasColumnName("description");
+            .HasColumnName("description")
+            .HasMaxLength(150);
     }
 }

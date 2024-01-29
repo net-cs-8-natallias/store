@@ -3,10 +3,8 @@ using Catalog.Host.Models;
 
 namespace Catalog.Host.Repositories.Interfaces;
 
-public interface ICatalogItemsRepository: ICatalogRepository<CatalogItem>
+public interface IItemRepository: ICatalogRepository<Item>
 {
     Task UpdateItemsStock(List<OrderItem> items);
     Task<List<Item>> GetItemsByCatalogItemId(int catalogItemId);
-    
-    Task<List<CatalogItem>> GetCatalog(CatalogFilter filter);
 }

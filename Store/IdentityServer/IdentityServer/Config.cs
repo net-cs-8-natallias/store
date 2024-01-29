@@ -19,6 +19,27 @@ namespace IdentityServer
         {
             return new ApiResource[]
             {
+                new ApiResource("Catalog Api")
+                {
+                    Scopes = new List<Scope>
+                    {
+                        new Scope("catalogApi")
+                    }
+                }, 
+                new ApiResource("Basket Api")
+                {
+                    Scopes = new List<Scope>
+                    {
+                        new Scope("basketApi")
+                    }
+                }, 
+                new ApiResource("Order Api")
+                {
+                    Scopes = new List<Scope>
+                    {
+                        new Scope("orderApi")
+                    }
+                }, 
                 new ApiResource("CatalogApi")
                 {
                     Scopes = new List<Scope>
@@ -48,6 +69,27 @@ namespace IdentityServer
         {
             return new[]
             {
+                new Client
+                {
+                    ClientId = "catalog.client",
+                    AllowedGrantTypes = GrantTypes.ClientCredentials,
+                    ClientSecrets = { new Secret("catalogSecret".Sha256()) },
+                    AllowedScopes = { "catalogApi" }
+                },
+                new Client
+                {
+                    ClientId = "basket.client",
+                    AllowedGrantTypes = GrantTypes.ClientCredentials,
+                    ClientSecrets = { new Secret("basketSecret".Sha256()) },
+                    AllowedScopes = { "basketApi" }
+                },
+                new Client
+                {
+                    ClientId = "order.client",
+                    AllowedGrantTypes = GrantTypes.ClientCredentials,
+                    ClientSecrets = { new Secret("orderSecret".Sha256()) },
+                    AllowedScopes = { "orderApi" }
+                },
                 new Client
                 {
                     ClientId = "OrderClient",

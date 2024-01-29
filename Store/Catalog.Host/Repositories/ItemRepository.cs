@@ -1,11 +1,12 @@
 using Catalog.Host.DbContextData;
 using Catalog.Host.DbContextData.Entities;
+using Catalog.Host.Models;
 using Catalog.Host.Repositories.Interfaces;
 using Microsoft.EntityFrameworkCore;
 
 namespace Catalog.Host.Repositories;
 
-public class ItemRepository: ICatalogRepository<Item>
+public class ItemRepository: IItemRepository
 {
     private readonly ApplicationDbContext _dbContext;
     private readonly ILogger<ItemRepository> _logger;
@@ -17,6 +18,35 @@ public class ItemRepository: ICatalogRepository<Item>
         _logger = logger;
     }
     
+    public async Task UpdateItemsStock(List<OrderItem> items)
+    {
+        foreach (var item in items)
+        {
+            var updatedItem = await _dbContext.Items.FindAsync(item.ItemId);
+            if (updatedItem == null)
+            {
+                throw new Exception($"Item with id: {item.ItemId} does not exist");
+            }
+
+            int quantity = updatedItem.Quantity - item.Quantity;
+            if (quantity < 0)
+            {
+                throw new Exception($"Not enough items in stock");
+            }
+
+            updatedItem.Quantity = quantity;
+            _dbContext.Update(updatedItem);
+            await _dbContext.SaveChangesAsync();
+        }
+    }
+
+    public async Task<List<Item>> GetItemsByCatalogItemId(int catalogItemId)
+    {
+        IQueryable<Item> query = _dbContext.Items;
+        query = query.Where(w => w.CatalogItemId == catalogItemId);
+        return await query.ToListAsync();
+    }
+    
     public async Task<List<Item>> GetCatalog()
     {
         return await _dbContext.Items.ToListAsync();
@@ -24,7 +54,10 @@ public class ItemRepository: ICatalogRepository<Item>
 
     public async Task<Item> FindById(int id)
     {
-        var item = await _dbContext.Items.FindAsync(id);
+        var item = await _dbContext.Items
+            .Include(i => i.CatalogItem)
+            .FirstOrDefaultAsync(i => i.Id == id);
+        
         if (item == null)
         {
             _logger.LogError($"*{GetType().Name}* item with id: {id} does not exist");

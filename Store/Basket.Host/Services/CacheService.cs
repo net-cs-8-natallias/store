@@ -54,5 +54,11 @@ public class CacheService: ICacheService
         return await redis.HashGetAllAsync(userId);
     }
 
+    public async Task RemoveAllAsync(string userId)
+    {
+        var redis = GetRedisDatabase();
+        await redis.KeyDeleteAsync(userId);
+    }
+
     private IDatabase GetRedisDatabase() => _redisCacheConnectionService.Connection.GetDatabase();
 }

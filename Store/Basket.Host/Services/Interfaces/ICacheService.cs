@@ -7,6 +7,6 @@ public interface ICacheService
     Task AddOrUpdateAsync(string userId, int itemId, int quantity);
     Task RemoveOrUpdateAsync(string userId, int itemId, int quantity);
     Task<HashEntry[]>GetAsync(string userId);
-    
-    
+    Task RemoveAllAsync(string userId);
+
 }

@@ -9,6 +9,7 @@ public interface IBffService
     Task<List<Item>> GetItemsByCatalogItemId(int catalogItemId);
     Task<List<CatalogItem>> GetCatalogItems(CatalogFilter filters);
     Task<List<CatalogItem>> GetCatalogItems();
+    Task<List<Item>> GetItems();
     Task<List<ItemBrand>> GetBrands();
     Task<List<ItemType>> GetTypes();
     Task<List<ItemCategory>> GetCategories();
@@ -16,5 +17,6 @@ public interface IBffService
     Task<ItemBrand> GetBrand(int id);
     Task<ItemType> GetType(int id);
     Task<ItemCategory> GetCategory(int id);
-    
+    Task<Item> GetItem(int id);
+
 }

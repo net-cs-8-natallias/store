@@ -82,19 +82,18 @@ builder.Services.AddEndpointsApiExplorer();
 builder.Services.Configure<CatalogConfigurations>(configuration);
 builder.Services.AddDbContextFactory<ApplicationDbContext>(opts => opts.UseNpgsql(configuration["ConnectionString"]));
 
+builder.Services.AddTransient<ICatalogItemRepository, CatalogItemRepository>();
+builder.Services.AddTransient<IItemRepository, ItemRepository>();
 builder.Services.AddTransient<ICatalogRepository<ItemBrand>, BrandsRepository>();
 builder.Services.AddTransient<ICatalogRepository<ItemType>, TypeRepository>();
 builder.Services.AddTransient<ICatalogRepository<ItemCategory>, CategoryRepository>();
-builder.Services.AddTransient<ICatalogItemsRepository, CatalogItemsRepository>();
-builder.Services.AddTransient<ICatalogRepository<Item>, ItemRepository>();
 
-builder.Services.AddTransient<IBffService, BffService>();
+builder.Services.AddTransient<ICatalogService<Item>, ItemService>();
+builder.Services.AddTransient<ICatalogService<CatalogItem>, CatalogItemService>();
 builder.Services.AddTransient<ICatalogService<ItemBrand>, BrandService>();
 builder.Services.AddTransient<ICatalogService<ItemType>, TypeService>();
 builder.Services.AddTransient<ICatalogService<ItemCategory>, CategoryService>();
-builder.Services.AddTransient<ICatalogService<CatalogItem>, CatalogItemService>();
-builder.Services.AddTransient<ICatalogService<Item>, ItemService>();
-
+builder.Services.AddTransient<IBffService, BffService>();
 
 var app = builder.Build();
 

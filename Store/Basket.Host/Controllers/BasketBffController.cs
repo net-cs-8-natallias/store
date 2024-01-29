@@ -25,18 +25,24 @@ public class BasketBffController: ControllerBase
     
     [HttpPost("item")]
     [ProducesResponseType((int)HttpStatusCode.OK)]
-    public async Task<IActionResult> Add(Item item)
+    public async Task<IActionResult> Add(Item item, string userId = null)
     {
-        var userId = User.FindFirst(ClaimTypes.NameIdentifier)?.Value;
+        if (userId == null)
+        {
+            userId = User.FindFirst(ClaimTypes.NameIdentifier)?.Value;
+        }
         await _basketService.AddItem(userId!, item);
         return Ok();
     }
     
     [HttpDelete("item")]
     [ProducesResponseType((int)HttpStatusCode.OK)]
-    public async Task<IActionResult> Delete(Item item)
+    public async Task<IActionResult> Delete(Item item, string userId = null)
     {
-        var userId = User.FindFirst(ClaimTypes.NameIdentifier)?.Value;
+        if (userId == null)
+        {
+            userId = User.FindFirst(ClaimTypes.NameIdentifier)?.Value;
+        }
         await _basketService.RemoveItem(userId!, item);
         return Ok();
     }
@@ -51,6 +57,18 @@ public class BasketBffController: ControllerBase
         }
         var response = await _basketService.GetItems(userId!);
         return Ok(response);
+    }
+    
+    [HttpDelete("items")]
+    [ProducesResponseType((int)HttpStatusCode.OK)]
+    public async Task<IActionResult> Delete(string userId = null)
+    {
+        if (userId == null)
+        {
+            userId = User.FindFirst(ClaimTypes.NameIdentifier)?.Value;
+        }
+        await _basketService.RemoveAll(userId!);
+        return Ok();
     }
 }
 

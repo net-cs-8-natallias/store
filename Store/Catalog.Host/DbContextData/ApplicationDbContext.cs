@@ -23,6 +23,6 @@ public class ApplicationDbContext: DbContext
         builder.ApplyConfiguration(new ItemBrandEntityConfiguration());
         builder.ApplyConfiguration(new ItemCategoryEntityConfiguration());
         builder.ApplyConfiguration(new ItemTypeEntityConfiguration());
-        builder.ApplyConfiguration(new StockEntityConfiguration());
+        builder.ApplyConfiguration(new ItemEntityConfiguration());
     }
  }
