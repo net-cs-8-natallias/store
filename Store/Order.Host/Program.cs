@@ -23,7 +23,7 @@ builder.Services.AddSwaggerGen(options =>
 {
     options.SwaggerDoc("v1", new OpenApiInfo
     {
-        Title = "Store- Catalog HTTP API",
+        Title = "Store- Order HTTP API",
         Description = "The Order Catalog Service HTTP API"
     });
     options.AddSecurityRequirement(new OpenApiSecurityRequirement

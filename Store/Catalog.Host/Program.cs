@@ -58,6 +58,7 @@ builder.Services.AddAuthentication("Bearer")
     .AddJwtBearer("Bearer", options =>
     {
         // required audience of access tokens
+        
         options.Audience = "CatalogApi";
         options.RequireHttpsMetadata = false;
 
@@ -104,6 +105,15 @@ if (app.Environment.IsDevelopment())
 }
 
 app.UseRouting();
+
+app.UseCors(builder =>
+    builder
+        .WithOrigins("http://localhost:5173")
+        .AllowAnyHeader()
+        .AllowAnyMethod()
+        .AllowCredentials()
+);
+
 app.UseAuthentication();
 app.UseAuthorization();
 

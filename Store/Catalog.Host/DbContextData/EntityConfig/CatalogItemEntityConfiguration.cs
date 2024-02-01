@@ -40,7 +40,7 @@ public class CatalogItemEntityConfiguration: IEntityTypeConfiguration<CatalogIte
 
         builder.Property(item => item.Image)
             .HasColumnName("image")
-            .HasMaxLength(150);;
+            .HasMaxLength(150);
 
         builder.HasOne(item => item.ItemCategory)
             .WithMany()

@@ -19,27 +19,13 @@ namespace IdentityServer
         {
             return new ApiResource[]
             {
-                new ApiResource("Catalog Api")
+                new ApiResource("ClientApi")
                 {
                     Scopes = new List<Scope>
                     {
-                        new Scope("catalogApi")
-                    }
-                }, 
-                new ApiResource("Basket Api")
-                {
-                    Scopes = new List<Scope>
-                    {
-                        new Scope("basketApi")
-                    }
-                }, 
-                new ApiResource("Order Api")
-                {
-                    Scopes = new List<Scope>
-                    {
-                        new Scope("orderApi")
-                    }
-                }, 
+                        new Scope("client")
+                    },
+                },
                 new ApiResource("CatalogApi")
                 {
                     Scopes = new List<Scope>
@@ -60,7 +46,7 @@ namespace IdentityServer
                     {
                         new Scope("order")
                     }
-                }
+                },
                 
             };
         }
@@ -71,24 +57,17 @@ namespace IdentityServer
             {
                 new Client
                 {
-                    ClientId = "catalog.client",
+                    ClientId = "BasketClient",
                     AllowedGrantTypes = GrantTypes.ClientCredentials,
-                    ClientSecrets = { new Secret("catalogSecret".Sha256()) },
-                    AllowedScopes = { "catalogApi" }
-                },
-                new Client
-                {
-                    ClientId = "basket.client",
-                    AllowedGrantTypes = GrantTypes.ClientCredentials,
-                    ClientSecrets = { new Secret("basketSecret".Sha256()) },
-                    AllowedScopes = { "basketApi" }
-                },
-                new Client
-                {
-                    ClientId = "order.client",
-                    AllowedGrantTypes = GrantTypes.ClientCredentials,
-                    ClientSecrets = { new Secret("orderSecret".Sha256()) },
-                    AllowedScopes = { "orderApi" }
+                    ClientSecrets =
+                    {
+                        new Secret("secret".Sha256())
+                    },
+                    AllowedScopes =
+                    {
+                        "order", "catalog"
+                    }
+                    
                 },
                 new Client
                 {

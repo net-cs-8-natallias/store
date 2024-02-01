@@ -30,10 +30,28 @@ public class BffService: IBffService
         _logger = logger;
     }
     
-    public async Task UpdateItemsStock(List<OrderItem> items)
+    public async Task IncreaseItemQuantity(List<OrderItem> items)
     {
-        await _itemRepository.UpdateItemsStock(items);
-        _logger.LogInformation($"stock items was updated with: {items.Count} items");
+        foreach (var i in items)
+        {
+            var item = await GetItem(i.ItemId);
+            item.Quantity = item.Quantity + i.Quantity;
+            await _itemRepository.UpdateInCatalog(item);
+        }
+    }
+
+    public async Task DecreaseItemQuantity(List<OrderItem> items)
+    {
+        foreach (var i in items)
+        {
+            var item = await GetItem(i.ItemId);
+            if (item.Quantity == 0)
+            {
+                throw new Exception($"Item with id: {i.ItemId} is not available in stock");
+            }
+            item.Quantity = item.Quantity - i.Quantity;
+            await _itemRepository.UpdateInCatalog(item);
+        }
     }
 
     public async Task<List<Item>> GetItemsByCatalogItemId(int catalogItemId)
@@ -48,14 +66,6 @@ public class BffService: IBffService
         var items = await _catalogItemRepository.GetCatalog(filters);
         _logger.LogDebug($"*{GetType().Name}* found {items.Count} items");
         return items;
-    }
-
-    public async Task<List<CatalogItem>> GetCatalogItems()
-    {
-        var items = await _catalogItemRepository.GetCatalog();
-        _logger.LogDebug($"*{GetType().Name}* found {items.Count} catalog items");
-        return items;
-
     }
 
     public async Task<List<Item>> GetItems()

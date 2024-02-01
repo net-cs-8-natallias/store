@@ -17,28 +17,6 @@ public class ItemRepository: IItemRepository
         _dbContext = dbContext;
         _logger = logger;
     }
-    
-    public async Task UpdateItemsStock(List<OrderItem> items)
-    {
-        foreach (var item in items)
-        {
-            var updatedItem = await _dbContext.Items.FindAsync(item.ItemId);
-            if (updatedItem == null)
-            {
-                throw new Exception($"Item with id: {item.ItemId} does not exist");
-            }
-
-            int quantity = updatedItem.Quantity - item.Quantity;
-            if (quantity < 0)
-            {
-                throw new Exception($"Not enough items in stock");
-            }
-
-            updatedItem.Quantity = quantity;
-            _dbContext.Update(updatedItem);
-            await _dbContext.SaveChangesAsync();
-        }
-    }
 
     public async Task<List<Item>> GetItemsByCatalogItemId(int catalogItemId)
     {

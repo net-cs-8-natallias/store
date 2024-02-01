@@ -21,7 +21,7 @@ public class CatalogItemRepository: ICatalogItemRepository
     public async Task<List<CatalogItem>> GetCatalog(CatalogFilter filter)
     {
         IQueryable<CatalogItem> query = _dbContext.CatalogItems;
-        if (filter.Category > 0) query = query.Where(w => w.ItemTypeId == filter.Category);
+        if (filter.Category > 0) query = query.Where(w => w.ItemCategoryId == filter.Category);
         if (filter.Type > 0) query = query.Where(w => w.ItemTypeId == filter.Type);
         if (filter.Brand > 0) query = query.Where(w => w.ItemBrandId == filter.Brand);
 
