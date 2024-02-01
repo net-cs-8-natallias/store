@@ -22,11 +22,19 @@ public class BffController: ControllerBase
         _service = service;
     }
 
-    [HttpPut("items/stock")]
-    public async Task<IActionResult> UpdateItemsStock(List<OrderItem> items)
+    [HttpPut("items/increase")]
+    public async Task<IActionResult> IncreaseItemQuantity(List<OrderItem> items)
     {
-        _logger.LogInformation($"*{GetType().Name}* request to update items stock");
-        await _service.UpdateItemsStock(items);
+        _logger.LogInformation($"*{GetType().Name}* request to increase items quantity stock");
+        await _service.IncreaseItemQuantity(items);
+        return Ok();
+    }
+    
+    [HttpPut("items/decrease")]
+    public async Task<IActionResult> DecreaseItemQuantity(List<OrderItem> items)
+    {
+        _logger.LogInformation($"*{GetType().Name}* request to decrease items quantity stock");
+        await _service.DecreaseItemQuantity(items);
         return Ok();
     }
 
@@ -76,7 +84,7 @@ public class BffController: ControllerBase
     public async Task<ActionResult> GetCategories()
     {
         _logger.LogInformation($"*{GetType().Name}* request to get all categories");
-        var categories = await _service.GetTypes();
+        var categories = await _service.GetCategories();
         return Ok(categories);
     }
 
@@ -116,7 +124,7 @@ public class BffController: ControllerBase
     public async Task<ActionResult> GetCategory(int id)
     {
         _logger.LogInformation($"*{GetType().Name}* request to get category by id: {id}");
-        var category = await _service.GetType(id);
+        var category = await _service.GetCategory(id);
         return Ok(category);
     }
     

@@ -20,4 +20,5 @@ public class ItemCategoryEntityConfiguration: IEntityTypeConfiguration<ItemCateg
             .IsRequired()
             .HasMaxLength(50);
     }
+
 }

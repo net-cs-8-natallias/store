@@ -1,13 +1,13 @@
 using System.Text;
+using Basket.Host.Services.Interfaces;
 using IdentityModel.Client;
 using Newtonsoft.Json;
-using Order.Host.Services.Interfaces;
 
-namespace Order.Host.Services;
+namespace Basket.Host.Services;
 
 public class HttpClientService: IHttpClientService
 {
-    private readonly IHttpClientFactory _clientFactory;
+       private readonly IHttpClientFactory _clientFactory;
     private readonly ILogger<HttpClientService> _logger;
 
     public HttpClientService(IHttpClientFactory clientFactory,
@@ -46,9 +46,9 @@ public class HttpClientService: IHttpClientService
             .RequestClientCredentialsTokenAsync(new ClientCredentialsTokenRequest
             {
                 Address = await GetDiscoveryDocumentAsync(),
-                ClientId = "OrderClient",
+                ClientId = "BasketClient",
                 ClientSecret = "secret",
-                Scope = "basket catalog"
+                Scope = "order catalog"
             });
     
         if (tokenResponse.IsError)

@@ -1,6 +1,7 @@
 using System.Security.Claims;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
+using Order.Host.Models;
 using Order.Host.Services.Interfaces;
 
 namespace Order.Host.Controllers;
@@ -21,18 +22,24 @@ public class OrderBffController: ControllerBase
         _service = service;
     }  
     
-    [HttpPost("orders")]
-    public async Task<IActionResult> CreateOrder()
+    [HttpPost("orders/{userId}")]
+    public async Task<IActionResult> CreateOrder(List<ItemModel> items, string userId = null)
     {
-        var userId = User.FindFirst(ClaimTypes.NameIdentifier)?.Value;
-        var orderId = await _service.CreateOrder(userId!);
+        if (userId == null)
+        {
+            userId = User.FindFirst(ClaimTypes.NameIdentifier)?.Value;
+        }
+        var orderId = await _service.CreateOrder(items, userId!);
         return Ok(orderId);
     }
 
-    [HttpGet("orders")]
-    public async Task<IActionResult> GetOrders()
+    [HttpGet("orders/{userId}")]
+    public async Task<IActionResult> GetOrders(string userId = null)
     {
-        var userId = User.FindFirst(ClaimTypes.NameIdentifier)?.Value;
+        if (userId == null)
+        {
+            userId = User.FindFirst(ClaimTypes.NameIdentifier)?.Value;
+        }
         var orders = await _service.GetOrdersByUserId(userId!);
         return Ok(orders);
     }

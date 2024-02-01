@@ -61,7 +61,7 @@ public class BasketBffController: ControllerBase
     
     [HttpDelete("items")]
     [ProducesResponseType((int)HttpStatusCode.OK)]
-    public async Task<IActionResult> Delete(string userId = null)
+    public async Task<IActionResult> DeleteAll(string userId = null)
     {
         if (userId == null)
         {
@@ -69,6 +69,18 @@ public class BasketBffController: ControllerBase
         }
         await _basketService.RemoveAll(userId!);
         return Ok();
+    }
+
+    [HttpPost]
+    public async Task<IActionResult> CheckoutBasket(string userId = null)
+    {
+        if (userId == null)
+        {
+            userId = User.FindFirst(ClaimTypes.NameIdentifier)?.Value;
+        }
+
+        var orderId = await _basketService.CheckoutBasket(userId);
+        return Ok(orderId);
     }
 }
 

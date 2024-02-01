@@ -23,7 +23,7 @@ public class OrderBffService: IOrderBffService
         _logger = logger;
         _httpClient = httpClient;
     }
-    public async Task<int?> CreateOrder(string userId)
+    public async Task<int?> CreateOrder(List<ItemModel> items, string userId)
     {
         if (!userId.HasValidNullability())
         {
@@ -35,36 +35,13 @@ public class OrderBffService: IOrderBffService
         {
             throw new Exception($"Order was not created");
         }
-        List<ItemModel> items = await GetItemsFromBasket(userId);
         decimal totalPrice = await AddOrderItems(items, orderId.Value);
         int totalQuantity = items.Sum(item => item.Quantity);
         order.Id = orderId.Value;
         order.TotalPrice = totalPrice;
         order.TotalQuantity = totalQuantity;
         await _catalogOrderRepository.UpdateItem(order);
-        await UpdateBasket(userId);
-        await UpdateCatalog(items);
         return orderId.Value;
-    }
-
-    private async Task UpdateCatalog(List<ItemModel> items)
-    {
-        await _httpClient.SendAsync<List<ItemModel>, object>(
-            $"http://localhost:5288/catalog-bff-controller/items/stock", 
-            HttpMethod.Put, items);
-    }
-    private async Task UpdateBasket(string userId)
-    {
-        await _httpClient.SendAsync<List<ItemModel>, object>(
-            $"http://localhost:5286/basket-bff-controller/items?userId={userId}", 
-            HttpMethod.Delete, null);
-    }
-    private async Task<List<ItemModel>> GetItemsFromBasket(string userId)
-    {
-        var items =  await _httpClient.SendAsync<List<ItemModel>, object>(
-            $"http://localhost:5286/basket-bff-controller/items?userId={userId}", 
-            HttpMethod.Get, null);
-        return items;
     }
     
     private async Task<decimal> AddOrderItems(List<ItemModel> orderItemsModel, int orderId)

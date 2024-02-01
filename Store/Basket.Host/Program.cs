@@ -73,6 +73,10 @@ builder.Services.AddControllers();
 builder.Services.AddEndpointsApiExplorer();
 builder.Services.AddSwaggerGen();
 
+builder.Services.AddHttpClient();
+builder.Services.AddSingleton<IHttpContextAccessor, HttpContextAccessor>();
+builder.Services.AddTransient<IHttpClientService, HttpClientService>();
+
 var redisConfig = builder.Configuration.GetSection("Redis");
 builder.Services.Configure<RedisConfig>(builder.Configuration.GetSection("Redis"));
 builder.Services.AddTransient<IBasketService, BasketService>();
@@ -88,6 +92,15 @@ if (app.Environment.IsDevelopment())
 }
 
 app.UseRouting();
+
+app.UseCors(builder =>
+    builder
+        .WithOrigins("http://localhost:5173")
+        .AllowAnyHeader()
+        .AllowAnyMethod()
+        .AllowCredentials()
+);
+
 app.UseAuthentication();
 app.UseAuthorization();
 
