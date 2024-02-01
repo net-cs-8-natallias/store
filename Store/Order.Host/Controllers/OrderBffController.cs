@@ -7,7 +7,7 @@ using Order.Host.Services.Interfaces;
 namespace Order.Host.Controllers;
 
 
-[Authorize(Policy = "ApiScope")]
+// [Authorize(Policy = "ApiScope")]
 [ApiController]
 [Route("order-bff-controller")]
 public class OrderBffController: ControllerBase
@@ -22,7 +22,7 @@ public class OrderBffController: ControllerBase
         _service = service;
     }  
     
-    [HttpPost("orders/{userId}")]
+    [HttpPost("orders")]
     public async Task<IActionResult> CreateOrder(List<ItemModel> items, string userId = null)
     {
         if (userId == null)
@@ -33,7 +33,7 @@ public class OrderBffController: ControllerBase
         return Ok(orderId);
     }
 
-    [HttpGet("orders/{userId}")]
+    [HttpGet("orders")]
     public async Task<IActionResult> GetOrders(string userId = null)
     {
         if (userId == null)

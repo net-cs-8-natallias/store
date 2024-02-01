@@ -64,10 +64,12 @@ public class BasketService: IBasketService
            {
                ItemId = i.ItemId,
                BrandId = catalogItem.CatalogItem.ItemBrandId,
-               TypeId = catalogItem.CatalogItem.ItemTypeId,
                Price = catalogItem.CatalogItem.Price,
                Quantity = i.Quantity,
-               Size = catalogItem.Size
+               Size = catalogItem.Size,
+               Name = catalogItem.CatalogItem.Name,
+               Image = catalogItem.CatalogItem.Image,
+               StockQuantity = catalogItem.Quantity
            });
         }
         

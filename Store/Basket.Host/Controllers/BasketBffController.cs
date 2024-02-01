@@ -7,7 +7,7 @@ using Microsoft.AspNetCore.Mvc;
 
 namespace Basket.Host.Controllers;
 
-[Authorize(Policy = "ApiScope")]
+//[Authorize(Policy = "ApiScope")]
 [ApiController]
 [Route("basket-bff-controller")]
 public class BasketBffController: ControllerBase
@@ -35,15 +35,15 @@ public class BasketBffController: ControllerBase
         return Ok();
     }
     
-    [HttpDelete("item")]
+    [HttpDelete("item/{itemId}/{quantity}")]
     [ProducesResponseType((int)HttpStatusCode.OK)]
-    public async Task<IActionResult> Delete(Item item, string userId = null)
+    public async Task<IActionResult> Delete(int itemId, int quantity, string userId = null)
     {
         if (userId == null)
         {
             userId = User.FindFirst(ClaimTypes.NameIdentifier)?.Value;
         }
-        await _basketService.RemoveItem(userId!, item);
+        await _basketService.RemoveItem(userId!, new(){ItemId = itemId, Quantity = quantity});
         return Ok();
     }
 
@@ -71,7 +71,7 @@ public class BasketBffController: ControllerBase
         return Ok();
     }
 
-    [HttpPost]
+    [HttpPost("items/checkout")]
     public async Task<IActionResult> CheckoutBasket(string userId = null)
     {
         if (userId == null)

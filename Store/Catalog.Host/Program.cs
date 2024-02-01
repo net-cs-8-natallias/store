@@ -59,8 +59,7 @@ builder.Services.AddAuthentication("Bearer")
     {
         // required audience of access tokens
         
-        //options.Audience = "CatalogApi";
-        options.Audience = "doughnutapi"; 
+        options.Audience = "CatalogApi";
         options.RequireHttpsMetadata = false;
 
 

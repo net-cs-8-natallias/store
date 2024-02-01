@@ -5,7 +5,7 @@ using Microsoft.AspNetCore.Mvc;
 
 namespace Catalog.Host.Controllers;
 
-[Authorize(Policy = "ApiScope")]
+//[Authorize(Policy = "ApiScope")]
 [ApiController]
 [Route("catalog-bff-controller")]
 public class BffController: ControllerBase
