@@ -1,10 +1,11 @@
 using Catalog.Host.DbContextData.Entities;
+using Catalog.Host.Dto;
 using Catalog.Host.Repositories.Interfaces;
 using Catalog.Host.Services.Interfaces;
 
 namespace Catalog.Host.Services;
 
-public class BrandService: ICatalogService<ItemBrand>
+public class BrandService: ICatalogService<ItemBrand, BrandDto>
 {
     private readonly ICatalogRepository<ItemBrand> _brandRepository;
     private readonly ILogger<BrandService> _logger;
@@ -18,26 +19,44 @@ public class BrandService: ICatalogService<ItemBrand>
     }
     public async Task<List<ItemBrand>> GetCatalog()
     {
-        return await _brandRepository.GetCatalog();
+        var brands =  await _brandRepository.GetCatalog();
+        _logger.LogInformation($"*{GetType().Name}* found {brands.Count} brands: {brands.ToString()}");
+        
+        return brands;
     }
 
     public async Task<ItemBrand> FindById(int id)
     {
-        return await _brandRepository.FindById(id);
+        var brand = await _brandRepository.FindById(id);
+        _logger.LogInformation($"*{GetType().Name}* found brand: {brand.ToString()}");
+        
+        return brand;
     }
 
-    public async Task<int?> AddToCatalog(ItemBrand item)
+    public async Task<int?> AddToCatalog(BrandDto item)
     {
-        return await _brandRepository.AddToCatalog(item);
+        var id = await _brandRepository.AddToCatalog(new ItemBrand()
+        {
+            Brand = item.Brand
+        });
+        _logger.LogInformation($"*{GetType().Name}* new brand with id: {id} was added");
+
+        return id;
     }
 
     public async Task<ItemBrand> UpdateInCatalog(ItemBrand item)
     {
-        return await _brandRepository.UpdateInCatalog(item);
+        var brand =  await _brandRepository.UpdateInCatalog(item);
+        _logger.LogInformation($"*{GetType().Name}* brand was updated to {brand.ToString()}");
+
+        return brand;
     }
 
     public async Task<ItemBrand> RemoveFromCatalog(int id)
     {
-        return await _brandRepository.RemoveFromCatalog(id);
+        var brand =  await _brandRepository.RemoveFromCatalog(id);
+        _logger.LogInformation($"*{GetType().Name}* removed brand: {brand.ToString()}");
+
+        return brand;
     }
 }

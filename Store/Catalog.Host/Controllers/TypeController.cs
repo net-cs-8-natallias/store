@@ -1,4 +1,5 @@
 using Catalog.Host.DbContextData.Entities;
+using Catalog.Host.Dto;
 using Catalog.Host.Services.Interfaces;
 using Microsoft.AspNetCore.Mvc;
 
@@ -9,9 +10,9 @@ namespace Catalog.Host.Controllers;
 public class TypeController: ControllerBase
 {
     private readonly ILogger<TypeController> _logger;
-    private readonly ICatalogService<ItemType> _service;
+    private readonly ICatalogService<ItemType, TypeDto> _service;
 
-    public TypeController(ICatalogService<ItemType> service,
+    public TypeController(ICatalogService<ItemType, TypeDto> service,
         ILogger<TypeController> logger)
     {
         _service = service;
@@ -21,6 +22,7 @@ public class TypeController: ControllerBase
     [HttpGet("types")]
     public async Task<ActionResult> GetTypes()
     {
+        _logger.LogInformation($"*{GetType().Name}* request to get all types");
         var types = await _service.GetCatalog();
         return Ok(types);
     }
@@ -28,13 +30,15 @@ public class TypeController: ControllerBase
     [HttpGet("types/{id}")]
     public async Task<ActionResult> GetTypeById(int id)
     {
+        _logger.LogInformation($"*{GetType().Name}* request to get type by id: {id}");
         var type = await _service.FindById(id);
         return Ok(type);
     }
 
     [HttpPost("types")]
-    public async Task<ActionResult> AddType(ItemType type)
+    public async Task<ActionResult> AddType(TypeDto type)
     {
+        _logger.LogInformation($"*{GetType().Name}* request to add new type with name: {type.Type}");
         var typeId = await _service.AddToCatalog(type);
         return Ok(typeId);
     }
@@ -42,6 +46,7 @@ public class TypeController: ControllerBase
     [HttpPut("types")]
     public async Task<ActionResult> UpdateType(ItemType type)
     {
+        _logger.LogInformation($"*{GetType().Name}* request to update type with id: {type.Id}");
         var updatedType = await _service.UpdateInCatalog(type);
         return Ok(updatedType);
     }
@@ -49,6 +54,7 @@ public class TypeController: ControllerBase
     [HttpDelete("types/{id}")]
     public async Task<ActionResult> DeleteType(int id)
     {
+        _logger.LogInformation($"*{GetType().Name}* request to remove type with id: {id}");
         var type = await _service.RemoveFromCatalog(id);
         return Ok(type);
     }

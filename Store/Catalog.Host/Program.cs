@@ -1,10 +1,12 @@
 using Catalog.Host.Configurations;
 using Catalog.Host.DbContextData;
 using Catalog.Host.DbContextData.Entities;
+using Catalog.Host.Dto;
 using Catalog.Host.Repositories;
 using Catalog.Host.Repositories.Interfaces;
 using Catalog.Host.Services;
 using Catalog.Host.Services.Interfaces;
+using ExceptionHandler;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.OpenApi.Models;
 using Serilog;
@@ -89,12 +91,23 @@ builder.Services.AddTransient<ICatalogRepository<ItemBrand>, BrandsRepository>()
 builder.Services.AddTransient<ICatalogRepository<ItemType>, TypeRepository>();
 builder.Services.AddTransient<ICatalogRepository<ItemCategory>, CategoryRepository>();
 
-builder.Services.AddTransient<ICatalogService<Item>, ItemService>();
-builder.Services.AddTransient<ICatalogService<CatalogItem>, CatalogItemService>();
-builder.Services.AddTransient<ICatalogService<ItemBrand>, BrandService>();
-builder.Services.AddTransient<ICatalogService<ItemType>, TypeService>();
-builder.Services.AddTransient<ICatalogService<ItemCategory>, CategoryService>();
+builder.Services.AddTransient<ICatalogService<Item, ItemDto>, ItemService>();
+builder.Services.AddTransient<ICatalogService<CatalogItem, CatalogItemDto>, CatalogItemService>();
+builder.Services.AddTransient<ICatalogService<ItemBrand, BrandDto>, BrandService>();
+builder.Services.AddTransient<ICatalogService<ItemType, TypeDto>, TypeService>();
+builder.Services.AddTransient<ICatalogService<ItemCategory, CategoryDto>, CategoryService>();
 builder.Services.AddTransient<IBffService, BffService>();
+
+
+builder.Services.AddCors((options =>
+{
+    options.AddPolicy("default", policy =>
+    {
+        policy.WithOrigins("http://localhost:5173")
+            .AllowAnyHeader()
+            .AllowAnyMethod();
+    });
+}));
 
 var app = builder.Build();
 
@@ -103,6 +116,7 @@ if (app.Environment.IsDevelopment())
     app.UseSwagger();
     app.UseSwaggerUI();
 }
+app.UseMiddleware<GlobalExceptionHandler>();
 
 app.UseRouting();
 
@@ -116,6 +130,8 @@ app.UseCors(builder =>
 
 app.UseAuthentication();
 app.UseAuthorization();
+
+app.UseCors("default");
 
 app.UseEndpoints(endpoints =>
 {

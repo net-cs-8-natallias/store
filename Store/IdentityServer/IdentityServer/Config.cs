@@ -1,5 +1,6 @@
 ﻿using IdentityServer4.Models;
 using System.Collections.Generic;
+using IdentityServer4;
 using Microsoft.Extensions.Configuration;
 
 namespace IdentityServer
@@ -19,13 +20,6 @@ namespace IdentityServer
         {
             return new ApiResource[]
             {
-                new ApiResource("ClientApi")
-                {
-                    Scopes = new List<Scope>
-                    {
-                        new Scope("client")
-                    },
-                },
                 new ApiResource("CatalogApi")
                 {
                     Scopes = new List<Scope>
@@ -127,7 +121,25 @@ namespace IdentityServer
                     {
                         "order"
                     }
-                }
+                },
+                new Client()
+                {
+                    ClientId = "ReactClient",
+                    Enabled = true,
+                    RequireClientSecret = false,
+                    AllowedGrantTypes = GrantTypes.Code,
+                    AllowAccessTokensViaBrowser = true,
+                    RedirectUris = {"http://localhost:5173/signin-oidc"},
+                    PostLogoutRedirectUris = {"http://localhost:5173/signout-callback-oidc"},
+                    AllowedCorsOrigins = {"http://localhost:5173"},
+                    AllowedScopes = new List<string>
+                    {
+                        IdentityServerConstants.StandardScopes.OpenId,
+                        IdentityServerConstants.StandardScopes.Profile,
+                        "catalog"
+                    }
+                },
+                
             };
         }
     }

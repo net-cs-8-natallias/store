@@ -2,6 +2,7 @@ using Catalog.Host.DbContextData;
 using Catalog.Host.DbContextData.Entities;
 using Catalog.Host.Models;
 using Catalog.Host.Repositories.Interfaces;
+using ExceptionHandler;
 using Microsoft.EntityFrameworkCore;
 
 namespace Catalog.Host.Repositories;
@@ -24,12 +25,15 @@ public class CatalogItemRepository: ICatalogItemRepository
         if (filter.Category > 0) query = query.Where(w => w.ItemCategoryId == filter.Category);
         if (filter.Type > 0) query = query.Where(w => w.ItemTypeId == filter.Type);
         if (filter.Brand > 0) query = query.Where(w => w.ItemBrandId == filter.Brand);
-
+        _logger.LogInformation($"*{GetType().Name}* returning all catalog items " + 
+                               $"filtered by category: {filter.Category}, type: {filter.Type}, brand: {filter.Brand}");
+        
         return await query.ToListAsync();
     }
 
     public async Task<List<CatalogItem>> GetCatalog()
     {
+        _logger.LogInformation($"*{GetType().Name}* returning all catalog items");
         return await _dbContext.CatalogItems.ToListAsync();
     }
 
@@ -39,8 +43,9 @@ public class CatalogItemRepository: ICatalogItemRepository
         if (item == null)
         {
             _logger.LogError($"*{GetType().Name}* item with id: {id} does not exist");
-            throw new Exception($"Item with ID: {id} does not exist");
+            throw new NotFoundException($"Item with ID: {id} does not exist");
         }
+        _logger.LogInformation($"*{GetType().Name}* returning catalog item by id: {item.Id}");
 
         return item;
     }
@@ -52,7 +57,10 @@ public class CatalogItemRepository: ICatalogItemRepository
         await FindCategory(item.ItemCategoryId);
         var newItem = await _dbContext.CatalogItems.AddAsync(item);
         await _dbContext.SaveChangesAsync();
-        return newItem.Entity.Id;
+        int id = newItem.Entity.Id;
+        _logger.LogInformation($"*{GetType().Name}* adding new catalog item with id: {id}");
+        
+        return id;
     }
     private async Task<ItemBrand> FindBrand(int id)
     {
@@ -60,8 +68,9 @@ public class CatalogItemRepository: ICatalogItemRepository
         if (brand == null)
         {
             _logger.LogError($"*{GetType().Name}* brand with id: {id} does not exist");
-            throw new Exception($"Brand with ID: {id} does not exist");
+            throw new NotFoundException($"Brand with ID: {id} does not exist");
         }
+        _logger.LogInformation($"*{GetType().Name}* returning brand with id: {brand.Id}");
 
         return brand;
     }
@@ -72,8 +81,9 @@ public class CatalogItemRepository: ICatalogItemRepository
         if (type == null)
         {
             _logger.LogError($"*{GetType().Name}* type with id: {id} does not exist");
-            throw new Exception($"Type with ID: {id} does not exist");
+            throw new NotFoundException($"Type with ID: {id} does not exist");
         }
+        _logger.LogInformation($"*{GetType().Name}* returning type with id: {type.Id}");
 
         return type;
     }
@@ -84,8 +94,9 @@ public class CatalogItemRepository: ICatalogItemRepository
         if (category == null)
         {
             _logger.LogError($"*{GetType().Name}* category with id: {id} does not exist");
-            throw new Exception($"Category with ID: {id} does not exist");
+            throw new NotFoundException($"Category with ID: {id} does not exist");
         }
+        _logger.LogInformation($"*{GetType().Name}* returning category with id: {id}");
 
         return category;
     }
@@ -106,6 +117,10 @@ public class CatalogItemRepository: ICatalogItemRepository
         newItem.Image = item.Image;
         newItem = _dbContext.CatalogItems.Update(newItem).Entity;
         await _dbContext.SaveChangesAsync();
+        _logger.LogInformation($"*{GetType().Name}* updating catalog item " +
+                               $"with id: {newItem.Id}, type id: {type.Id}, " +
+                               $"brand: {brand.Id}, category: {category.Id}");
+        
         return newItem;
     }
 
@@ -114,6 +129,8 @@ public class CatalogItemRepository: ICatalogItemRepository
         var item = await FindById(id);
         _dbContext.CatalogItems.Remove(item);
         await _dbContext.SaveChangesAsync();
+        _logger.LogInformation($"*{GetType().Name}* removing catalog item with id: {item.Id}");
+        
         return item;
     }
     

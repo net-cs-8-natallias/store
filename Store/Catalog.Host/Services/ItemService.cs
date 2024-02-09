@@ -1,10 +1,11 @@
 using Catalog.Host.DbContextData.Entities;
+using Catalog.Host.Dto;
 using Catalog.Host.Repositories.Interfaces;
 using Catalog.Host.Services.Interfaces;
 
 namespace Catalog.Host.Services;
 
-public class ItemService: ICatalogService<Item>
+public class ItemService: ICatalogService<Item, ItemDto>
 {
     private readonly IItemRepository _itemRepository;
     private readonly ILogger<ItemService> _logger;
@@ -18,26 +19,46 @@ public class ItemService: ICatalogService<Item>
     }
     public async Task<List<Item>> GetCatalog()
     {
-        return await _itemRepository.GetCatalog();
+        var items = await _itemRepository.GetCatalog();
+        _logger.LogInformation($"*{GetType().Name}* found {items.Count} items: {items.ToString()}");
+
+        return items;
     }
 
     public async Task<Item> FindById(int id)
     {
-        return await _itemRepository.FindById(id);
+        var item = await _itemRepository.FindById(id);
+        _logger.LogInformation($"*{GetType().Name}* found item: {item.ToString()}");
+
+        return item;
     }
 
-    public async Task<int?> AddToCatalog(Item item)
+    public async Task<int?> AddToCatalog(ItemDto item)
     {
-        return await _itemRepository.AddToCatalog(item);
+        int? id = await _itemRepository.AddToCatalog(new Item()
+        {
+            CatalogItemId = item.CatalogItemId,
+            Quantity = item.Quantity,
+            Size = item.Size
+        });
+        _logger.LogInformation($"*{GetType().Name}* new item with id; {id} was added");
+
+        return id;
     }
 
     public async Task<Item> UpdateInCatalog(Item item)
     {
-        return await _itemRepository.UpdateInCatalog(item);
+        var newItem = await _itemRepository.UpdateInCatalog(item);
+        _logger.LogInformation($"*{GetType().Name}* item was updated to: {newItem.ToString()}");
+
+        return newItem;
     }
 
     public async Task<Item> RemoveFromCatalog(int id)
     {
-        return await _itemRepository.RemoveFromCatalog(id);
+        var item = await _itemRepository.RemoveFromCatalog(id);
+        _logger.LogInformation($"*{GetType().Name}* removed item: {item.ToString()}");
+
+        return item;
     }
 }

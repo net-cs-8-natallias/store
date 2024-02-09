@@ -10,4 +10,22 @@ public class OrderItem
     public string? Name { get; set; }
     public string? Image { get; set; }
     public int StockQuantity { get; set; }
+    
+    public override string ToString()
+    {
+        return $"OrderItem: id: {ItemId}, quantity: {Quantity}, " +
+               $"brandId: {BrandId}, price: {Price}, size: {Size}, name: {Name}, " +
+               $"image: {Image}, stockQuantity: {StockQuantity
+               }";
+    }
+    
+    public override bool Equals(object? obj)
+    {
+        return base.Equals(obj);
+    }
+
+    public override int GetHashCode()
+    {
+        return base.GetHashCode();
+    }
 }

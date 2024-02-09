@@ -1,10 +1,11 @@
 using Catalog.Host.DbContextData.Entities;
+using Catalog.Host.Dto;
 using Catalog.Host.Repositories.Interfaces;
 using Catalog.Host.Services.Interfaces;
 
 namespace Catalog.Host.Services;
 
-public class TypeService: ICatalogService<ItemType>
+public class TypeService: ICatalogService<ItemType, TypeDto>
 {
     private readonly ICatalogRepository<ItemType> _typeRepository;
     private readonly ILogger<TypeService> _logger;
@@ -18,26 +19,44 @@ public class TypeService: ICatalogService<ItemType>
     }
     public async Task<List<ItemType>> GetCatalog()
     {
-        return await _typeRepository.GetCatalog();
+        var types = await _typeRepository.GetCatalog();
+        _logger.LogInformation($"*{GetType().Name}* found {types.Count} types: {types.ToString()}");
+
+        return types;
     }
 
     public async Task<ItemType> FindById(int id)
     {
-        return await _typeRepository.FindById(id);
+        var type = await _typeRepository.FindById(id);
+        _logger.LogInformation($"*{GetType().Name}* found type: {type.ToString()}");
+
+        return type;
     }
 
-    public async Task<int?> AddToCatalog(ItemType item)
+    public async Task<int?> AddToCatalog(TypeDto item)
     {
-        return await _typeRepository.AddToCatalog(item);
+        int? id = await _typeRepository.AddToCatalog(new ItemType()
+        {
+            Type = item.Type
+        });
+        _logger.LogInformation($"*{GetType().Name}* new type with id: {id} was added");
+
+        return id;
     }
 
     public async Task<ItemType> UpdateInCatalog(ItemType item)
     {
-        return await _typeRepository.UpdateInCatalog(item);
+        var type = await _typeRepository.UpdateInCatalog(item);
+        _logger.LogInformation($"*{GetType().Name}* type was updated to: {type.ToString()}");
+
+        return type;
     }
 
     public async Task<ItemType> RemoveFromCatalog(int id)
     {
-        return await _typeRepository.RemoveFromCatalog(id);
+        var type = await _typeRepository.RemoveFromCatalog(id);
+        _logger.LogInformation($"*{GetType().Name}* removed type: {type.ToString()}");
+
+        return type;
     }
 }

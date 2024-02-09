@@ -1,6 +1,8 @@
 using Catalog.Host.DbContextData;
 using Catalog.Host.DbContextData.Entities;
+using Catalog.Host.Dto;
 using Catalog.Host.Repositories.Interfaces;
+using ExceptionHandler;
 using Microsoft.EntityFrameworkCore;
 
 namespace Catalog.Host.Repositories;
@@ -19,6 +21,7 @@ public class TypeRepository: ICatalogRepository<ItemType>
     
     public async Task<List<ItemType>> GetCatalog()
     {
+        _logger.LogInformation($"*{GetType().Name}* returning all types");
         return await _dbContext.ItemTypes.ToListAsync();
     }
 
@@ -28,8 +31,9 @@ public class TypeRepository: ICatalogRepository<ItemType>
         if (type == null)
         {
             _logger.LogError($"*{GetType().Name}* type with id: {id} does not exist");
-            throw new Exception($"Type with ID: {id} does not exist");
+            throw new NotFoundException($"Type with ID: {id} does not exist");
         }
+        _logger.LogInformation($"*{GetType().Name}* returning type with id: {type.Id}");
 
         return type;
     }
@@ -38,7 +42,10 @@ public class TypeRepository: ICatalogRepository<ItemType>
     {
         var newType = await _dbContext.ItemTypes.AddAsync(item);
         await _dbContext.SaveChangesAsync();
-        return newType.Entity.Id;
+        int id = newType.Entity.Id;
+        _logger.LogInformation($"*{GetType().Name}* adding new type with id: {id}");
+        
+        return id;
     }
 
     public async Task<ItemType> UpdateInCatalog(ItemType item)
@@ -47,6 +54,8 @@ public class TypeRepository: ICatalogRepository<ItemType>
         newType.Type = item.Type;
         newType = _dbContext.ItemTypes.Update(newType).Entity;
         await _dbContext.SaveChangesAsync();
+        _logger.LogInformation($"*{GetType().Name}* updating type with id: {newType.Id}");
+        
         return newType;
     }
 
@@ -55,6 +64,8 @@ public class TypeRepository: ICatalogRepository<ItemType>
         var type = await FindById(id);
         _dbContext.ItemTypes.Remove(type);
         await _dbContext.SaveChangesAsync();
+        _logger.LogInformation($"*{GetType().Name}* removing type with id: {type.Id}");
+        
         return type;
     }
 }

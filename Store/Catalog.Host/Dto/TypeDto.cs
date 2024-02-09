@@ -1,13 +1,12 @@
-namespace Catalog.Host.DbContextData.Entities;
+namespace Catalog.Host.Dto;
 
-public class ItemType
+public class TypeDto
 {
-    public int Id { get; set; }
     public string? Type { get; set; }
     
     public override string ToString()
     {
-        return $"ItemType: id: {Id}, type: {Type}";
+        return $"TypeDto: type: {Type}";
     }
     
     public override bool Equals(object? obj)
