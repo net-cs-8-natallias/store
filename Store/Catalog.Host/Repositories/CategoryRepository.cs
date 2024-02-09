@@ -1,6 +1,7 @@
 using Catalog.Host.DbContextData;
 using Catalog.Host.DbContextData.Entities;
 using Catalog.Host.Repositories.Interfaces;
+using ExceptionHandler;
 using Microsoft.EntityFrameworkCore;
 
 namespace Catalog.Host.Repositories;
@@ -18,6 +19,7 @@ public class CategoryRepository: ICatalogRepository<ItemCategory>
     }
     public async Task<List<ItemCategory>> GetCatalog()
     {
+        _logger.LogInformation($"*{GetType().Name}* returning all categories");
         return await _dbContext.ItemCategories.ToListAsync();
     }
 
@@ -27,8 +29,9 @@ public class CategoryRepository: ICatalogRepository<ItemCategory>
         if (category == null)
         {
             _logger.LogError($"*{GetType().Name}* category with id: {id} does not exist");
-            throw new Exception($"Category with ID: {id} does not exist");
+            throw new NotFoundException($"Category with ID: {id} does not exist");
         }
+        _logger.LogInformation($"*{GetType().Name}* returning category with id: {category.Id}");
 
         return category;
     }
@@ -37,7 +40,10 @@ public class CategoryRepository: ICatalogRepository<ItemCategory>
     {
         var newCategory = await _dbContext.ItemCategories.AddAsync(item);
         await _dbContext.SaveChangesAsync();
-        return newCategory.Entity.Id;
+        int id = newCategory.Entity.Id;
+        _logger.LogInformation($"*{GetType().Name}* adding new category with id: {id}");
+        
+        return id;
     }
 
     public async Task<ItemCategory> UpdateInCatalog(ItemCategory item)
@@ -46,6 +52,8 @@ public class CategoryRepository: ICatalogRepository<ItemCategory>
         newCategory.Category = item.Category;
         newCategory = _dbContext.ItemCategories.Update(newCategory).Entity;
         await _dbContext.SaveChangesAsync();
+        _logger.LogInformation($"*{GetType().Name}* updating category with id: {newCategory.Id}");
+        
         return newCategory;
     }
 
@@ -54,6 +62,8 @@ public class CategoryRepository: ICatalogRepository<ItemCategory>
         var category = await FindById(id);
         _dbContext.ItemCategories.Remove(category);
         await _dbContext.SaveChangesAsync();
+        _logger. LogInformation($"*{GetType().Name}* removing category with id: {category.Id}");
+        
         return category;
     }
 }

@@ -1,10 +1,11 @@
 using Catalog.Host.DbContextData.Entities;
+using Catalog.Host.Dto;
 using Catalog.Host.Repositories.Interfaces;
 using Catalog.Host.Services.Interfaces;
 
 namespace Catalog.Host.Services;
 
-public class CategoryService: ICatalogService<ItemCategory>
+public class CategoryService: ICatalogService<ItemCategory, CategoryDto>
 {
     private readonly ICatalogRepository<ItemCategory> _categoryRepository;
     private readonly ILogger<CategoryService> _logger;
@@ -18,26 +19,44 @@ public class CategoryService: ICatalogService<ItemCategory>
     }
     public async Task<List<ItemCategory>> GetCatalog()
     {
-        return await _categoryRepository.GetCatalog();
+        var categories = await _categoryRepository.GetCatalog();
+        _logger.LogInformation($"*{GetType().Name}* found {categories.Count} categories: {categories.ToString()}");
+
+        return categories;
     }
 
     public async Task<ItemCategory> FindById(int id)
     {
-        return await _categoryRepository.FindById(id);
+        var category = await _categoryRepository.FindById(id);
+        _logger.LogInformation($"*{GetType().Name}* found category: {category.ToString()}");
+
+        return category;
     }
 
-    public async Task<int?> AddToCatalog(ItemCategory item)
+    public async Task<int?> AddToCatalog(CategoryDto item)
     {
-        return await _categoryRepository.AddToCatalog(item);
+        int? id = await _categoryRepository.AddToCatalog(new ItemCategory()
+        {
+            Category = item.Category
+        });
+        _logger.LogInformation($"*{GetType().Name}* new category with id: {id} was added");
+
+        return id;
     }
 
     public async Task<ItemCategory> UpdateInCatalog(ItemCategory item)
     {
-        return await _categoryRepository.UpdateInCatalog(item);
+        var category = await _categoryRepository.UpdateInCatalog(item);
+        _logger.LogInformation($"*{GetType().Name}* category was updated to: {category.ToString()}");
+
+        return category;
     }
 
     public async Task<ItemCategory> RemoveFromCatalog(int id)
     {
-        return await _categoryRepository.RemoveFromCatalog(id);
+        var category = await _categoryRepository.RemoveFromCatalog(id);
+        _logger.LogInformation($"*{GetType().Name}* removed category: {category.ToString()}");
+
+        return category;
     }
 }

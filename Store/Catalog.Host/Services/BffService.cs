@@ -2,6 +2,7 @@ using Catalog.Host.DbContextData.Entities;
 using Catalog.Host.Models;
 using Catalog.Host.Repositories.Interfaces;
 using Catalog.Host.Services.Interfaces;
+using ExceptionHandler;
 
 namespace Catalog.Host.Services;
 
@@ -32,102 +33,100 @@ public class BffService: IBffService
     
     public async Task IncreaseItemQuantity(List<OrderItem> items)
     {
+        _logger.LogInformation($"*{GetType().Name}* increasing item quantity for {items.Count} items");
         foreach (var i in items)
         {
             var item = await GetItem(i.ItemId);
+            _logger.LogInformation($"*{GetType().Name}* increasing item quantity " +
+                                   $"from {item.Quantity} to {item.Quantity + i.Quantity} " +
+                                   $"for item with id: {item.Id}");
             item.Quantity = item.Quantity + i.Quantity;
             await _itemRepository.UpdateInCatalog(item);
         }
+        _logger.LogInformation($"*{GetType().Name}* item quantity was increased for {items.Count} items");
     }
 
     public async Task DecreaseItemQuantity(List<OrderItem> items)
     {
-        foreach (var i in items)
-        {
-            var item = await GetItem(i.ItemId);
-            if (item.Quantity == 0)
-            {
-                throw new Exception($"Item with id: {i.ItemId} is not available in stock");
-            }
-            item.Quantity = item.Quantity - i.Quantity;
-            await _itemRepository.UpdateInCatalog(item);
-        }
+        _logger.LogInformation($"*{GetType().Name}* decreasing items quantity for {items.Count} items");
+        await _itemRepository.DecreaseItemQuantity(items);
+        _logger.LogInformation($"*{GetType().Name}* successfully decreased quantity for {items.Count} items");
     }
 
     public async Task<List<Item>> GetItemsByCatalogItemId(int catalogItemId)
     {
         var items = await _itemRepository.GetItemsByCatalogItemId(catalogItemId);
-        _logger.LogInformation($"found: {items.Count} items with catalog item id: {catalogItemId}");
+        _logger.LogInformation($"*{GetType().Name}* found: {items.Count} items with catalog item id: {catalogItemId}. items: {items.ToString()}");
         return items;
     }
     
     public async Task<List<CatalogItem>> GetCatalogItems(CatalogFilter filters)
     {
         var items = await _catalogItemRepository.GetCatalog(filters);
-        _logger.LogDebug($"*{GetType().Name}* found {items.Count} items");
+        _logger.LogDebug($"*{GetType().Name}* found {items.Count} items: {items.ToString()}");
         return items;
     }
 
     public async Task<List<Item>> GetItems()
     {
         var items = await _itemRepository.GetCatalog();
-        _logger.LogDebug($"*{GetType().Name}* found {items.Count} items");
+        _logger.LogDebug($"*{GetType().Name}* found {items.Count} items: {items.ToString()}");
         return items;
     }
 
     public async Task<List<ItemBrand>> GetBrands()
     {
         var brands = await _brandRepository.GetCatalog();
-        _logger.LogDebug($"*{GetType().Name}* found {brands.Count} brands");
+        _logger.LogDebug($"*{GetType().Name}* found {brands.Count} brands: {brands.ToString()}");
         return brands;
     }
 
     public async Task<List<ItemType>> GetTypes()
     {
         var types = await _typeRepository.GetCatalog();
-        _logger.LogDebug($"*{GetType().Name}* found {types.Count} types");
+        _logger.LogDebug($"*{GetType().Name}* found {types.Count} types: {types.ToString()}");
         return types;
     }
 
     public async Task<List<ItemCategory>> GetCategories()
     {
         var categories = await _categoryRepository.GetCatalog();
-        _logger.LogDebug($"*{GetType().Name}* found {categories.Count} categories");
+        _logger.LogDebug($"*{GetType().Name}* found {categories.Count} categories: {categories.ToString()}");
         return categories;
     }
 
     public async Task<CatalogItem> GetCatalogItem(int id)
     {
-        var item = await _catalogItemRepository.FindById(id);
-        _logger.LogDebug($"*{GetType().Name}* found catalog item: {item}");
-        return item;
+        var catalogItem = await _catalogItemRepository.FindById(id);
+        _logger.LogDebug($"*{GetType().Name}* found catalog item: {catalogItem.ToString()}");
+        return catalogItem;
     }
     
     public async Task<Item> GetItem(int id)
     {
         var item = await _itemRepository.FindById(id);
-        _logger.LogDebug($"*{GetType().Name}* found item: {item}");
+        _logger.LogDebug($"*{GetType().Name}* found item: {item.ToString()}");
         return item;
     }
 
     public async Task<ItemBrand> GetBrand(int id)
     {
         var brand = await _brandRepository.FindById(id);
-        _logger.LogDebug($"*{GetType().Name}* found brand: {brand}");
+        _logger.LogDebug($"*{GetType().Name}* found brand: {brand.ToString()}");
         return brand;
     }
 
     public async Task<ItemType> GetType(int id)
     {
         var type = await _typeRepository.FindById(id);
-        _logger.LogDebug($"*{GetType().Name}* found type: {type}");
+        _logger.LogDebug($"*{GetType().Name}* found type: {type.ToString()}");
         return type;
     }
     
     public async Task<ItemCategory> GetCategory(int id)
     {
         var category = await _categoryRepository.FindById(id);
-        _logger.LogDebug($"*{GetType().Name}* found category: {category}");
+        _logger.LogDebug($"*{GetType().Name}* found category: {category.ToString()}");
         return category;
     }
     

@@ -31,6 +31,7 @@ public class BasketBffController: ControllerBase
         {
             userId = User.FindFirst(ClaimTypes.NameIdentifier)?.Value;
         }
+        _logger.LogInformation($"*{GetType().Name}* request to add item to the basket for user: {userId}");
         await _basketService.AddItem(userId!, item);
         return Ok();
     }
@@ -43,6 +44,7 @@ public class BasketBffController: ControllerBase
         {
             userId = User.FindFirst(ClaimTypes.NameIdentifier)?.Value;
         }
+        _logger.LogInformation($"*{GetType().Name}* request to remove items from the basket for user: {userId}");
         await _basketService.RemoveItem(userId!, new(){ItemId = itemId, Quantity = quantity});
         return Ok();
     }
@@ -55,6 +57,7 @@ public class BasketBffController: ControllerBase
         {
             userId = User.FindFirst(ClaimTypes.NameIdentifier)?.Value;
         }
+        _logger.LogInformation($"*{GetType().Name}* request to get basket items for user: {userId}");
         var response = await _basketService.GetItems(userId!);
         return Ok(response);
     }
@@ -67,6 +70,7 @@ public class BasketBffController: ControllerBase
         {
             userId = User.FindFirst(ClaimTypes.NameIdentifier)?.Value;
         }
+        _logger.LogInformation($"*{GetType().Name}* request to remove all items from the basket for user: {userId}");
         await _basketService.RemoveAll(userId!);
         return Ok();
     }
@@ -78,7 +82,7 @@ public class BasketBffController: ControllerBase
         {
             userId = User.FindFirst(ClaimTypes.NameIdentifier)?.Value;
         }
-
+        _logger.LogInformation($"*{GetType().Name}* request to check-out basket for user: {userId}");
         var orderId = await _basketService.CheckoutBasket(userId);
         return Ok(orderId);
     }

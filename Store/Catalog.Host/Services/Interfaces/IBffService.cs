@@ -13,7 +13,6 @@ public interface IBffService
     Task<List<ItemBrand>> GetBrands();
     Task<List<ItemType>> GetTypes();
     Task<List<ItemCategory>> GetCategories();
-    
     Task<CatalogItem> GetCatalogItem(int id);
     Task<ItemBrand> GetBrand(int id);
     Task<ItemType> GetType(int id);

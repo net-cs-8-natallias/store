@@ -19,45 +19,52 @@ public class CacheService: ICacheService
         _config = config;
         _logger = logger;
     }
-    public async Task AddOrUpdateAsync(string userId, int itemId, int quantity)
+    public async Task AddOrUpdateAsync(string id, int key, int value)
     {
         var redis = GetRedisDatabase();
-        if (redis.HashExists(userId, itemId))
+        if (redis.HashExists(id, key))
         {
-            await redis.HashIncrementAsync(userId, itemId, quantity);
+            _logger.LogInformation($"*{GetType().Name}* increasing value with key: {key} by {value}, with id: {id}");
+            await redis.HashIncrementAsync(id, key, value);
         }
         else
         {
-            await redis.HashSetAsync(userId, itemId, quantity);
+            _logger.LogInformation($"*{GetType().Name}* setting new key: {key} with value: {value} by id: {id}");
+            await redis.HashSetAsync(id, key, value);
         }
 
         
     }
 
-    public async Task RemoveOrUpdateAsync(string userId, int itemId, int quantity)
+    public async Task RemoveOrUpdateAsync(string id, int key, int value)
     {
         var redis = GetRedisDatabase();
-        if (await redis.HashGetAsync(userId, itemId) == quantity)
+        if (await redis.HashGetAsync(id, key) == value)
         {
-            await redis.HashDeleteAsync(userId, itemId);
+            _logger.LogInformation($"*{GetType().Name}* deleting key: {key} with value {value}, by id: {id}");
+            await redis.HashDeleteAsync(id, key);
         }
         else
         {
-            await redis.HashDecrementAsync(userId, itemId, quantity);
+            _logger.LogInformation($"*{GetType().Name}* decreasing value with key: {key} by {value}, by id: {id}");
+            await redis.HashDecrementAsync(id, key, value);
         }
     }
 
-    public async Task<HashEntry[]> GetAsync(string userId)
+    public async Task<HashEntry[]> GetAsync(string id)
     {
         var redis = GetRedisDatabase();
-
-        return await redis.HashGetAllAsync(userId);
+        
+        var values =  await redis.HashGetAllAsync(id);
+        _logger.LogInformation($"*{GetType().Name}* found {values.Length} keys by id: {id}");
+        return values;
     }
 
-    public async Task RemoveAllAsync(string userId)
+    public async Task RemoveAllAsync(string id)
     {
         var redis = GetRedisDatabase();
-        await redis.KeyDeleteAsync(userId);
+        _logger.LogInformation($"*{GetType().Name}* removing all keys by id: {id}");
+        await redis.KeyDeleteAsync(id);
     }
 
     private IDatabase GetRedisDatabase() => _redisCacheConnectionService.Connection.GetDatabase();

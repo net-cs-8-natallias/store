@@ -1,13 +1,15 @@
-namespace Basket.Host.Models;
+namespace Catalog.Host.Dto;
 
-public class Item
+public class ItemDto
 {
-    public int ItemId { get; set; }
+    public int CatalogItemId { get; set; }
     public int Quantity { get; set; }
+    public string? Size { get; set; }
     
     public override string ToString()
     {
-        return $"Item: itemId: {ItemId}, quantity: {Quantity}";
+        return $"ItemDto: catalogItemId: {CatalogItemId}, " +
+               $"quantity: {Quantity}, size: {Size}";
     }
     
     public override bool Equals(object? obj)
@@ -20,4 +22,3 @@ public class Item
         return base.GetHashCode();
     }
 }
-

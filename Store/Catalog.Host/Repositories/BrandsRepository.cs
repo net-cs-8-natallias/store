@@ -1,6 +1,7 @@
 using Catalog.Host.DbContextData;
 using Catalog.Host.DbContextData.Entities;
 using Catalog.Host.Repositories.Interfaces;
+using ExceptionHandler;
 using Microsoft.EntityFrameworkCore;
 
 namespace Catalog.Host.Repositories;
@@ -18,6 +19,8 @@ public class BrandsRepository: ICatalogRepository<ItemBrand>
     }
     public async Task<List<ItemBrand>> GetCatalog()
     {
+        _logger.LogInformation($"*{GetType().Name}* returning all brands from catalog");
+        
         return await _dbContext.ItemBrands.ToListAsync();
     }
 
@@ -27,9 +30,10 @@ public class BrandsRepository: ICatalogRepository<ItemBrand>
         if (brand == null)
         {
             _logger.LogError($"*{GetType().Name}* brand with id: {id} does not exist");
-            throw new Exception($"Brand with ID: {id} does not exist");
+            throw new NotFoundException($"Brand with ID: {id} does not exist");
         }
-
+        _logger.LogInformation($"*{GetType().Name}* returning brand with id: {brand.Id}");
+        
         return brand;
     }
 
@@ -37,7 +41,10 @@ public class BrandsRepository: ICatalogRepository<ItemBrand>
     {
         var newBrand = await _dbContext.ItemBrands.AddAsync(item);
         await _dbContext.SaveChangesAsync();
-        return newBrand.Entity.Id;
+        int id = newBrand.Entity.Id;
+        _logger.LogInformation($"*{GetType().Name}* adding new brand with id: {id}");
+        
+        return id;
     }
 
     public async Task<ItemBrand> UpdateInCatalog(ItemBrand item)
@@ -46,6 +53,8 @@ public class BrandsRepository: ICatalogRepository<ItemBrand>
         newBrand.Brand = item.Brand;
         newBrand = _dbContext.ItemBrands.Update(newBrand).Entity;
         await _dbContext.SaveChangesAsync();
+        _logger.LogInformation($"*{GetType().Name}* updating brand with id: {newBrand.Id}");
+        
         return newBrand;
     }
 
@@ -54,6 +63,8 @@ public class BrandsRepository: ICatalogRepository<ItemBrand>
         var brand = await FindById(id);
         _dbContext.ItemBrands.Remove(brand);
         await _dbContext.SaveChangesAsync();
+        _logger.LogInformation($"*{GetType().Name}* removing brand with id: {brand.Id}");
+        
         return brand;
     }
 }

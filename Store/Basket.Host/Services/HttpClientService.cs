@@ -26,15 +26,23 @@ public class HttpClientService: IHttpClientService
         httpMessage.Method = method;
 
         if (content != null)
+        {
             httpMessage.Content =
                 new StringContent(JsonConvert.SerializeObject(content), Encoding.UTF8, "application/json");
+        }
+           
         var result = await client.SendAsync(httpMessage);
+        _logger.LogInformation($"*{GetType().Name}* status code: {result.StatusCode}");
         if (result.IsSuccessStatusCode)
         {
             var resultContent = await result.Content.ReadAsStringAsync();
             var response = JsonConvert.DeserializeObject<TResponse>(resultContent);
+            _logger.LogInformation($"*{GetType().Name}* response: {response}");
+
             return response;
         }
+   
+
 
         return default !;
     }
@@ -50,11 +58,12 @@ public class HttpClientService: IHttpClientService
                 ClientSecret = "secret",
                 Scope = "order catalog"
             });
-    
+        _logger.LogInformation($"*{GetType().Name}* response token: {tokenResponse}");
         if (tokenResponse.IsError)
         {
+            _logger.LogError($"*{GetType().Name}* request failed with the following error: {tokenResponse.Error}");
             throw new Exception(
-                $"RequestClientCredentialsTokenAsync faild with the following error: {tokenResponse.Error}", tokenResponse.Exception);
+                $"RequestClientCredentialsTokenAsync failed with the following error: {tokenResponse.Error}", tokenResponse.Exception);
         }
     
         return tokenResponse.AccessToken;
@@ -67,10 +76,10 @@ public class HttpClientService: IHttpClientService
             .GetDiscoveryDocumentAsync("http://localhost:7001");
         if (discoveryDocument.IsError)
         {
-            Console.WriteLine(discoveryDocument.Error);
+            _logger.LogError($"*{GetType().Name}* discovery document: {discoveryDocument.Error}");
             return string.Empty;
         }
-    
+        _logger.LogInformation($"*{GetType().Name}* discovery document: {discoveryDocument.TokenEndpoint}");
         return discoveryDocument.TokenEndpoint;
     }
 }
