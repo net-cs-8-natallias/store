@@ -1,3 +1,4 @@
+using ExceptionHandler;
 using Microsoft.EntityFrameworkCore;
 using Order.Host.DbContextData;
 using Order.Host.DbContextData.Entities;
@@ -20,11 +21,14 @@ public class CatalogOrderRepository: ICatalogOrderRepository
     {
         IQueryable<CatalogOrder> query = _dbContext.CatalogOrders;
         query = query.Where(item => item.UserId == userId);
+        _logger.LogInformation($"*{GetType().Name}* returning orders for user with id: {userId}");
+        
         return await query.ToListAsync();
     }
     
     public async Task<List<CatalogOrder>> GetItems()
     {
+        _logger.LogInformation($"*{GetType().Name}* returning all orders");
         return await _dbContext.CatalogOrders.ToListAsync();
     }
 
@@ -34,8 +38,9 @@ public class CatalogOrderRepository: ICatalogOrderRepository
         if (catalogOrder == null)
         {
             _logger.LogError($"*{GetType().Name}* order with id: {id} does not exist");
-            throw new Exception($"Order with ID: {id} does not exist");
+            throw new NotFoundException($"Order with ID: {id} does not exist");
         }
+        _logger.LogInformation($"*{GetType().Name}* returning order with id: {id}");
 
         return catalogOrder;
     }
@@ -44,11 +49,13 @@ public class CatalogOrderRepository: ICatalogOrderRepository
     {
         var newOrder = await _dbContext.CatalogOrders.AddAsync(item);
         await _dbContext.SaveChangesAsync();
+        _logger.LogInformation($"*{GetType().Name}* adding new order for user with id: {item.UserId}");
         return newOrder.Entity.Id;
     }
 
     public async Task<CatalogOrder> UpdateItem(CatalogOrder item)
     {
+        _logger.LogInformation($"*{GetType().Name}* updating order with id: {item.Id}");
         var newOrder = await FindById(item.Id);
         newOrder.Date = item.Date;
         newOrder.TotalPrice = item.TotalPrice;
@@ -62,11 +69,13 @@ public class CatalogOrderRepository: ICatalogOrderRepository
     public async Task<CatalogOrder> RemoveItem(int id)
     {
         var order = await FindById(id);
+        _logger.LogInformation($"*{GetType().Name}* removing order with id: {order.Id}");
         IQueryable<OrderItem> query = _dbContext.OrderItems;
         query = query.Where(item => item.OrderId == order.Id);
         foreach (var i in await query.ToListAsync())
         {
             _dbContext.OrderItems.Remove(i);
+            _logger.LogInformation($"*{GetType().Name}* removing item with id: {i.Id}");
             await _dbContext.SaveChangesAsync();
         }
         _dbContext.CatalogOrders.Remove(order);
