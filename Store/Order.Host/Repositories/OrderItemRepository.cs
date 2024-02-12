@@ -1,3 +1,4 @@
+using ExceptionHandler;
 using Microsoft.EntityFrameworkCore;
 using Order.Host.DbContextData;
 using Order.Host.DbContextData.Entities;
@@ -19,6 +20,7 @@ public class OrderItemRepository: IOrderRepository<OrderItem>
     
     public async Task<List<OrderItem>> GetItems()
     {
+        _logger.LogInformation($"*{GetType().Name}* returning all order items");
         return await _dbContext.OrderItems.ToListAsync();
     }
 
@@ -28,8 +30,9 @@ public class OrderItemRepository: IOrderRepository<OrderItem>
         if (orderItem == null)
         {
             _logger.LogError($"*{GetType().Name}* order item with id: {id} does not exist");
-            throw new Exception($"Order ItemModel with ID: {id} does not exist");
+            throw new NotFoundException($"Order ItemModel with ID: {id} does not exist");
         }
+        _logger.LogInformation($"*{GetType().Name}* returning order item with id: {id}");
 
         return orderItem;
     }
@@ -38,6 +41,7 @@ public class OrderItemRepository: IOrderRepository<OrderItem>
     {
         await FindOrder(item.OrderId);
         var newOrderItem = await _dbContext.OrderItems.AddAsync(item);
+        _logger.LogInformation($"*{GetType().Name}* adding new item with order id: {item.Order}");
         return newOrderItem.Entity.Id;
     }
 
@@ -47,8 +51,9 @@ public class OrderItemRepository: IOrderRepository<OrderItem>
         if (order == null)
         {
             _logger.LogError($"*{GetType().Name}* order with id: {id} does not exist");
-            throw new Exception($"Order with ID: {id} does not exist");
+            throw new NotFoundException($"Order with ID: {id} does not exist");
         }
+        _logger.LogInformation($"*{GetType().Name}* returning order with id: {order.Id}");
 
         return order;
     }
@@ -57,6 +62,8 @@ public class OrderItemRepository: IOrderRepository<OrderItem>
     {
         var order = await FindOrder(item.OrderId);
         var newItem = await FindById(item.Id);
+        _logger.LogInformation($"*{GetType().Name}* updating order item " +
+                               $"with id: {newItem.Id} for order with id: {order.Id}");
         newItem.OrderId = order.Id;
         newItem.Quantity = item.Quantity;
         newItem.ItemId = item.ItemId;
@@ -72,6 +79,7 @@ public class OrderItemRepository: IOrderRepository<OrderItem>
         var item = await FindById(id);
         _dbContext.OrderItems.Remove(item);
         await _dbContext.SaveChangesAsync();
+        _logger.LogInformation($"*{GetType().Name}* removing order item with id: {item.Id}");
         return item;
     }
 }

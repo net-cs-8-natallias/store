@@ -5,6 +5,6 @@ namespace Order.Host.Services.Interfaces;
 
 public interface IOrderBffService
 {
-    Task<int?> CreateOrder(List<ItemModel> i, string userId);
+    Task<int?> CreateOrder(List<OrderItemModel> i, string userId);
     Task<List<CatalogOrder>> GetOrdersByUserId(string userId);
 }

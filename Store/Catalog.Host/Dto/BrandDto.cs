@@ -1,7 +1,11 @@
+using System.ComponentModel.DataAnnotations;
+
 namespace Catalog.Host.Dto;
 
 public class BrandDto
 {
+    [Required]
+    [StringLength(25)]
     public string? Brand { get; set; }
     
     public override string ToString()

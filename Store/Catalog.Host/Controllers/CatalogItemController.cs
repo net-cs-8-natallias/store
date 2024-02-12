@@ -44,11 +44,11 @@ public class CatalogItemController: ControllerBase
         return Ok(itemsId);
     }
 
-    [HttpPut("catalog-items")]
-    public async Task<ActionResult> UpdateCatalogItem(CatalogItem item)
+    [HttpPut("catalog-items/{id}")]
+    public async Task<ActionResult> UpdateCatalogItem(int id, CatalogItemDto item)
     {
-        _logger.LogInformation($"*{GetType().Name}* request to update catalog item with id: {item.Id}");
-        var updatedItems = await _service.UpdateInCatalog(item);
+        _logger.LogInformation($"*{GetType().Name}* request to update catalog item with id: {id}");
+        var updatedItems = await _service.UpdateInCatalog(id, item);
         return Ok(updatedItems);
     }
 

@@ -1,4 +1,3 @@
-using Namotion.Reflection;
 using Order.Host.DbContextData.Entities;
 using Order.Host.Models;
 using Order.Host.Repositories.Interfaces;
@@ -11,76 +10,46 @@ public class OrderBffService: IOrderBffService
     private readonly ICatalogOrderRepository _catalogOrderRepository;
     private readonly IOrderRepository<OrderItem> _orderItemRepository;
     private readonly ILogger<OrderBffService> _logger;
-    private readonly IHttpClientService _httpClient;
 
     public OrderBffService(ICatalogOrderRepository catalogOrderRepository,
         IOrderRepository<OrderItem> orderItemRepository,
-        ILogger<OrderBffService> logger, 
-        IHttpClientService httpClient)
+        ILogger<OrderBffService> logger)
     {
         _catalogOrderRepository = catalogOrderRepository;
         _orderItemRepository = orderItemRepository;
         _logger = logger;
-        _httpClient = httpClient;
     }
-    public async Task<int?> CreateOrder(List<ItemModel> items, string userId)
+    //_logger.LogInformation($"*{GetType().Name}* items in the basket: {string.Join(", ", orderItems)}");
+    public async Task<int?> CreateOrder(List<OrderItemModel> items, string userId)
     {
-        if (!userId.HasValidNullability())
-        {
-            throw new Exception($"Unknown user");
-        }
         CatalogOrder order = new CatalogOrder() { UserId = userId, Date = DateTime.Now.ToShortDateString()};
         int? orderId = await _catalogOrderRepository.AddItem(order);
-        if (!orderId.HasValue)
-        {
-            throw new Exception($"Order was not created");
-        }
-        decimal totalPrice = await AddOrderItems(items, orderId.Value);
+        _logger.LogInformation($"*{GetType().Name}* creating new order with id: {orderId}");
+        decimal totalPrice = items.Sum(item => item.Quantity * item.Price);
         int totalQuantity = items.Sum(item => item.Quantity);
+        foreach (var item in items)
+        {
+            var orderItem = await _orderItemRepository.AddItem(new()
+            {
+                OrderId = orderId.Value,
+                ItemId = item.ItemId,
+                Quantity = item.Quantity,
+                SubPrice = item.Quantity * item.Price
+            });
+            _logger.LogInformation($"*{GetType().Name}* creating new order item: {orderItem.ToString()}");
+        }
         order.Id = orderId.Value;
         order.TotalPrice = totalPrice;
         order.TotalQuantity = totalQuantity;
-        await _catalogOrderRepository.UpdateItem(order);
+        var newOrder = await _catalogOrderRepository.UpdateItem(order);
+        _logger.LogInformation($"*{GetType().Name}* new order was added: {order.ToString()}");
         return orderId.Value;
-    }
-    
-    private async Task<decimal> AddOrderItems(List<ItemModel> orderItemsModel, int orderId)
-    {
-        decimal totalPrice = 0;
-        foreach (var item in orderItemsModel)
-        {
-            var stockItem = await _httpClient.SendAsync<ItemEntityModel, object>(
-                $"http://localhost:5288/catalog-bff-controller/items/{item.ItemId}", 
-                HttpMethod.Get, null);
-            if (stockItem == null)
-            {
-                throw new Exception($"item with id: {item.ItemId} does not exist");
-            }
-            Console.WriteLine($"*** catalog: {stockItem.ToString()}");
-            if (!stockItem.CatalogItem.Price.HasValidNullability())
-            {
-                throw new Exception($"Price for item with id: {stockItem.Id} was not found");
-            }
-            decimal subtotal = item.Quantity * stockItem.CatalogItem.Price;
-            totalPrice += subtotal;
-            await _orderItemRepository.AddItem(new()
-            {
-                OrderId = orderId,
-                ItemId = stockItem.Id,
-                Quantity = item.Quantity,
-                SubPrice = subtotal
-            });
-        }
-
-        return totalPrice;
     }
 
     public async Task<List<CatalogOrder>> GetOrdersByUserId(string userId)
     {
-        if (!userId.HasValidNullability())
-        {
-            throw new Exception($"Unknown user");
-        }
-        return await _catalogOrderRepository.GetOrdersByUserId(userId);
+        var orders = await _catalogOrderRepository.GetOrdersByUserId(userId);
+        _logger.LogInformation($"*{GetType().Name}* found orders {orders.Count}: {string.Join(", ", orders)}");
+        return orders;
     }
 }

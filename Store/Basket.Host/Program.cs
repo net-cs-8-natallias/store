@@ -1,6 +1,7 @@
 using Basket.Host.Configurations;
 using Basket.Host.Services;
 using Basket.Host.Services.Interfaces;
+using ExceptionHandler;
 using Microsoft.OpenApi.Models;
 using Serilog;
 
@@ -90,6 +91,7 @@ if (app.Environment.IsDevelopment())
     app.UseSwagger();
     app.UseSwaggerUI();
 }
+app.UseMiddleware<GlobalExceptionHandler>();
 
 app.UseRouting();
 

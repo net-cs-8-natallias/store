@@ -1,8 +1,7 @@
-namespace Order.Host.DbContextData.Entities;
+namespace Order.Host.Dto;
 
-public class CatalogOrder
+public class CatalogOrderDto
 {
-    public int Id { get; set; }
     public string? Date { get; set; }
     public int TotalQuantity { get; set; }
     public decimal TotalPrice { get; set; }
@@ -10,7 +9,7 @@ public class CatalogOrder
     
     public override string ToString()
     {
-        return $"CatalogOrder: id: {Id}, date: {Date}, totalQuantity: {TotalQuantity}, " +
+        return $"CatalogOrderDto: date: {Date}, totalQuantity: {TotalQuantity}, " +
                $"totalPrice: {TotalPrice}, userId: {UserId}";
     }
     public override bool Equals(object? obj)
@@ -22,5 +21,4 @@ public class CatalogOrder
     {
         return base.GetHashCode();
     }
-    
 }

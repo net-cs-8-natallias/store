@@ -34,13 +34,13 @@ public class GlobalExceptionHandler
             context.Response.ContentType = "text/plain"; 
             await context.Response.WriteAsync(ex.Message);
         }
-        catch (Exception ex)
-        {
-            _logger.LogError($"An unexpected error occurred: {ex}");
-            context.Response.StatusCode = StatusCodes.Status500InternalServerError;
-            context.Response.ContentType = "text/plain";
-            await context.Response.WriteAsync("An unexpected error occurred.");
-        }
+        // catch (Exception ex)
+        // {
+        //     _logger.LogError($"An unexpected error occurred: {ex.Message}");
+        //     context.Response.StatusCode = StatusCodes.Status500InternalServerError;
+        //     context.Response.ContentType = "text/plain";
+        //     await context.Response.WriteAsync("An unexpected error occurred.");
+        // }
     }
  
 }

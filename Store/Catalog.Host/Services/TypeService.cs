@@ -20,7 +20,7 @@ public class TypeService: ICatalogService<ItemType, TypeDto>
     public async Task<List<ItemType>> GetCatalog()
     {
         var types = await _typeRepository.GetCatalog();
-        _logger.LogInformation($"*{GetType().Name}* found {types.Count} types: {types.ToString()}");
+        _logger.LogInformation($"*{GetType().Name}* found {types.Count} types: {string.Join(", ", types)}");
 
         return types;
     }
@@ -44,9 +44,12 @@ public class TypeService: ICatalogService<ItemType, TypeDto>
         return id;
     }
 
-    public async Task<ItemType> UpdateInCatalog(ItemType item)
+    public async Task<ItemType> UpdateInCatalog(int id, TypeDto item)
     {
-        var type = await _typeRepository.UpdateInCatalog(item);
+        var type = await _typeRepository.UpdateInCatalog(new ItemType()
+        {
+            Type = item.Type
+        });
         _logger.LogInformation($"*{GetType().Name}* type was updated to: {type.ToString()}");
 
         return type;

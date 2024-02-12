@@ -1,5 +1,3 @@
-using System.Security.Claims;
-using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Order.Host.Models;
 using Order.Host.Services.Interfaces;
@@ -22,25 +20,22 @@ public class OrderBffController: ControllerBase
         _service = service;
     }  
     
-    [HttpPost("orders")]
-    public async Task<IActionResult> CreateOrder(List<ItemModel> items, string userId = null)
+    [HttpPost("orders/{userId}")]
+    public async Task<IActionResult> CreateOrder(List<OrderItemModel> items, string userId)
     {
-        if (userId == null)
-        {
-            userId = User.FindFirst(ClaimTypes.NameIdentifier)?.Value;
-        }
-        var orderId = await _service.CreateOrder(items, userId!);
+        _logger.LogInformation($"*{GetType().Name}* request to create new order " +
+                               $"with {items.Count} items, for user: {userId}");
+        var orderId = await _service.CreateOrder(items, userId);
+        
         return Ok(orderId);
     }
 
-    [HttpGet("orders")]
-    public async Task<IActionResult> GetOrders(string userId = null)
+    [HttpGet("orders/{userId}")]
+    public async Task<IActionResult> GetOrders(string userId)
     {
-        if (userId == null)
-        {
-            userId = User.FindFirst(ClaimTypes.NameIdentifier)?.Value;
-        }
-        var orders = await _service.GetOrdersByUserId(userId!);
+        _logger.LogInformation($"*{GetType().Name}* request to get all orders for user: {userId}");
+        var orders = await _service.GetOrdersByUserId(userId);
+        
         return Ok(orders);
     }
 }

@@ -12,7 +12,12 @@ public class ItemBrand
     
     public override bool Equals(object? obj)
     {
-        return base.Equals(obj);
+        if (obj == null || GetType() != obj.GetType())
+        {
+            return false;
+        }
+        ItemBrand other = (ItemBrand)obj;
+        return Id == other.Id && Brand == other.Brand;
     }
 
     public override int GetHashCode()

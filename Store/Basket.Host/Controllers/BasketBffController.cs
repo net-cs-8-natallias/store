@@ -2,6 +2,7 @@ using System.Net;
 using System.Security.Claims;
 using Basket.Host.Models;
 using Basket.Host.Services.Interfaces;
+using ExceptionHandler;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 
@@ -86,6 +87,8 @@ public class BasketBffController: ControllerBase
         var orderId = await _basketService.CheckoutBasket(userId);
         return Ok(orderId);
     }
+
+
 }
 
 

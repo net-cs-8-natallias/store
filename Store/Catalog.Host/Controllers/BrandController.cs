@@ -43,11 +43,11 @@ public class BrandController: ControllerBase
         return Ok(brandId);
     }
 
-    [HttpPut("brands")]
-    public async Task<ActionResult> UpdateBrand(ItemBrand brand)
+    [HttpPut("brands/{id}")]
+    public async Task<ActionResult> UpdateBrand(int id, BrandDto brand)
     {
-        _logger.LogInformation($"*{GetType().Name}* request to update brand with id: {brand.Id}");
-        var updatedBrand = await _service.UpdateInCatalog(brand);
+        _logger.LogInformation($"*{GetType().Name}* request to update brand with id: {id}");
+        var updatedBrand = await _service.UpdateInCatalog(id, brand);
         return Ok(updatedBrand);
     }
 

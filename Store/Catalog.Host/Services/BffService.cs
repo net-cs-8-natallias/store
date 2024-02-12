@@ -56,42 +56,42 @@ public class BffService: IBffService
     public async Task<List<Item>> GetItemsByCatalogItemId(int catalogItemId)
     {
         var items = await _itemRepository.GetItemsByCatalogItemId(catalogItemId);
-        _logger.LogInformation($"*{GetType().Name}* found: {items.Count} items with catalog item id: {catalogItemId}. items: {items.ToString()}");
+        _logger.LogInformation($"*{GetType().Name}* found: {items.Count} items with catalog item id: {catalogItemId}. items: {string.Join(", ", items)}");
         return items;
     }
     
     public async Task<List<CatalogItem>> GetCatalogItems(CatalogFilter filters)
     {
-        var items = await _catalogItemRepository.GetCatalog(filters);
-        _logger.LogDebug($"*{GetType().Name}* found {items.Count} items: {items.ToString()}");
-        return items;
+        var catalogItems = await _catalogItemRepository.GetCatalog(filters);
+        _logger.LogDebug($"*{GetType().Name}* found {catalogItems.Count} catalog items: {string.Join(", ", catalogItems)}");
+        return catalogItems;
     }
 
     public async Task<List<Item>> GetItems()
     {
         var items = await _itemRepository.GetCatalog();
-        _logger.LogDebug($"*{GetType().Name}* found {items.Count} items: {items.ToString()}");
+        _logger.LogDebug($"*{GetType().Name}* found {items.Count} items: {string.Join(", ", items)}");
         return items;
     }
 
     public async Task<List<ItemBrand>> GetBrands()
     {
         var brands = await _brandRepository.GetCatalog();
-        _logger.LogDebug($"*{GetType().Name}* found {brands.Count} brands: {brands.ToString()}");
+        _logger.LogDebug($"*{GetType().Name}* found {brands.Count} brands: {string.Join(", ", brands)}");
         return brands;
     }
 
     public async Task<List<ItemType>> GetTypes()
     {
         var types = await _typeRepository.GetCatalog();
-        _logger.LogDebug($"*{GetType().Name}* found {types.Count} types: {types.ToString()}");
+        _logger.LogDebug($"*{GetType().Name}* found {types.Count} types: {string.Join(", ", types)}");
         return types;
     }
 
     public async Task<List<ItemCategory>> GetCategories()
     {
         var categories = await _categoryRepository.GetCatalog();
-        _logger.LogDebug($"*{GetType().Name}* found {categories.Count} categories: {categories.ToString()}");
+        _logger.LogDebug($"*{GetType().Name}* found {categories.Count} categories: {string.Join(", ", categories)}");
         return categories;
     }
 

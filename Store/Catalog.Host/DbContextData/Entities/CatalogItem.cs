@@ -24,7 +24,16 @@ public class CatalogItem
     
     public override bool Equals(object? obj)
     {
-        return base.Equals(obj);
+        if (obj == null || GetType() != obj.GetType())
+        {
+            return false;
+        }
+        CatalogItem other = (CatalogItem)obj;
+        return Id == other.Id && Name == other.Name 
+                              && ItemBrandId == other.ItemBrandId 
+                              && ItemTypeId == other.ItemTypeId
+                              && Price == other.Price 
+                              && ItemCategoryId == other.ItemCategoryId;
     }
 
     public override int GetHashCode()
