@@ -16,7 +16,13 @@ public class Item
     
     public override bool Equals(object? obj)
     {
-        return base.Equals(obj);
+        if (obj == null || GetType() != obj.GetType())
+        {
+            return false;
+        }
+        Item other = (Item)obj;
+        return Id == other.Id && CatalogItemId == other.CatalogItemId
+            && Quantity == other.Quantity && Size == other.Size;
     }
 
     public override int GetHashCode()

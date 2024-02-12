@@ -20,7 +20,7 @@ public class CatalogItemService: ICatalogService<CatalogItem, CatalogItemDto>
     public async Task<List<CatalogItem>> GetCatalog()
     {
         var catalogItems =  await _itemRepository.GetCatalog();
-        _logger.LogInformation($"*{GetType().Name}* found {catalogItems.Count} catalog items: {catalogItems.ToString()}");
+        _logger.LogInformation($"*{GetType().Name}* found {catalogItems.Count} catalog items: {string.Join(", ", catalogItems)}");
 
         return catalogItems;
     }
@@ -50,9 +50,19 @@ public class CatalogItemService: ICatalogService<CatalogItem, CatalogItemDto>
         return id;
     }
 
-    public async Task<CatalogItem> UpdateInCatalog(CatalogItem item)
+    public async Task<CatalogItem> UpdateInCatalog(int id, CatalogItemDto item)
     {
-        var catalogItem = await _itemRepository.UpdateInCatalog(item);
+        var catalogItem = await _itemRepository.UpdateInCatalog(new CatalogItem()
+        {
+            Id = id,
+            Name = item.Name,
+            ItemBrandId = item.ItemBrandId,
+            ItemTypeId = item.ItemTypeId,
+            Price = item.Price,
+            Image = item.Image,
+            ItemCategoryId = item.ItemCategoryId,
+            Description = item.Description
+        });
         _logger.LogInformation($"*{GetType().Name}* catalog item was update to: {catalogItem.ToString()}");
 
         return catalogItem;

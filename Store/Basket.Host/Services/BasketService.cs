@@ -23,40 +23,48 @@ public class BasketService: IBasketService
     
     public async Task AddItem(string userId, Item item)
     {
-        _logger.LogInformation($"*{GetType().Name}* adding {item.Quantity} item with id: {item.ItemId}");
-        var response = await _httpClient.SendAsync<Task, object>(
-            $"{_catalogBaseUrl}/items/decrease", 
-            HttpMethod.Put, new List<Item>()
-            {
-                new()
-                {
-                    ItemId = item.ItemId, Quantity = item.Quantity
-                }
-            });
-        if (response.Status == TaskStatus.Faulted)
+        try
         {
-            throw new IllegalArgumentException(response.Exception?.InnerException?.Message ?? "Unknown error");
+            _logger.LogInformation($"*{GetType().Name}* adding {item.Quantity} item with id: {item.ItemId}");
+            await _httpClient.SendAsync<Task, object>(
+                $"{_catalogBaseUrl}/items/decrease",
+                HttpMethod.Put, new List<Item>()
+                {
+                    new()
+                    {
+                        ItemId = item.ItemId, Quantity = item.Quantity
+                    }
+                });
+            await _cacheService.AddOrUpdateAsync(userId, item.ItemId, item.Quantity);
         }
-        await _cacheService.AddOrUpdateAsync(userId, item.ItemId, item.Quantity);
+        catch (Exception e)
+        {
+            _logger.LogError(e.Message);
+            throw;
+        }
     }
 
     public async Task RemoveItem(string userId, Item item)
     {
-        _logger.LogInformation($"*{GetType().Name}* request to remove {item.Quantity} items: {item.ItemId}");
-        var response = await _httpClient.SendAsync<Task, object>(
-            $"{_catalogBaseUrl}/items/increase", 
-            HttpMethod.Put, new List<Item>()
-            {
-                new()
-                {
-                    ItemId = item.ItemId, Quantity = item.Quantity
-                }
-            });
-        if (response.Status == TaskStatus.Faulted)
+        try
         {
-            throw new Exception("Unknown error");
+            _logger.LogInformation($"*{GetType().Name}* request to remove {item.Quantity} items: {item.ItemId}");
+            var response = await _httpClient.SendAsync<Task, object>(
+                $"{_catalogBaseUrl}/items/increase",
+                HttpMethod.Put, new List<Item>()
+                {
+                    new()
+                    {
+                        ItemId = item.ItemId, Quantity = item.Quantity
+                    }
+                });
+            await _cacheService.RemoveOrUpdateAsync(userId, item.ItemId, item.Quantity);
         }
-        await _cacheService.RemoveOrUpdateAsync(userId, item.ItemId, item.Quantity);
+        catch (Exception e)
+        {
+            _logger.LogError(e.Message);
+            throw;
+        }
     }
 
     public async Task<List<OrderItem>> GetItems(string userId)
@@ -67,10 +75,46 @@ public class BasketService: IBasketService
         if (items.Count == 0)
         {
             return orderItems;
-        } 
+        }
+
+        orderItems = await GetOrderItems(items);
         
-        _logger.LogInformation($"*{GetType().Name}* items in the basket: {orderItems.ToString()}");
+        _logger.LogInformation($"*{GetType().Name}* items in the basket: {string.Join(", ", orderItems)}");
+
+
         return orderItems;
+    }
+
+    private async Task<List<OrderItem>> GetOrderItems(List<Item> basketItems)
+    {
+        List<OrderItem> res = new List<OrderItem>();
+        try
+        {
+            foreach (var i in basketItems)
+            {
+                var catalogItem =  await _httpClient.SendAsync<ItemModel, object>(
+                    $"{_catalogBaseUrl}/items/{i.ItemId}", 
+                    HttpMethod.Get, null);
+                res.Add(new OrderItem()
+                {
+                    ItemId = i.ItemId,
+                    BrandId = catalogItem.CatalogItem.ItemBrandId,
+                    Price = catalogItem.CatalogItem.Price,
+                    Quantity = i.Quantity,
+                    Size = catalogItem.Size,
+                    Name = catalogItem.CatalogItem.Name,
+                    Image = catalogItem.CatalogItem.Image,
+                    StockQuantity = catalogItem.Quantity
+                });
+            }
+        }
+        catch (Exception e)
+        {
+            _logger.LogError(e.Message);
+            throw;
+        }
+            
+        return res;
     }
 
     private async Task<List<Item>> GetBasketItems(string userId)
@@ -89,23 +133,39 @@ public class BasketService: IBasketService
 
     public async Task RemoveAll(string userId)
     {
-        var items = await GetBasketItems(userId);
-        _logger.LogInformation($"*{GetType().Name}* total items to remove: {items.Count}");
-        await _cacheService.RemoveAllAsync(userId);
-        await _httpClient.SendAsync<Task, object>(
-            $"{_catalogBaseUrl}/items/increase", 
-            HttpMethod.Post, items);
+        try
+        {
+            var items = await GetBasketItems(userId);
+            _logger.LogInformation($"*{GetType().Name}* total items to remove: {items.Count}");
+            await _cacheService.RemoveAllAsync(userId);
+            await _httpClient.SendAsync<Task, object>(
+                $"{_catalogBaseUrl}/items/increase", 
+                HttpMethod.Post, items);
+        }
+        catch (Exception e)
+        {
+            _logger.LogError(e.Message);
+            throw;
+        }
     }
 
     public async Task<int> CheckoutBasket(string userId)
     {
-        var items = await GetItems(userId);
-        _logger.LogInformation($"*{GetType().Name}* total items to check-out: {items.Count}");
-        var orderId = await _httpClient.SendAsync<int, object>(
-            $"{_orderBaseUrl}/orders/{userId}", 
-            HttpMethod.Post, items);
-        _logger.LogInformation($"*{GetType().Name}* check-out completed with order id: {orderId}");
-        await RemoveAll(userId);
-        return orderId;
+        try
+        {
+            var items = await GetItems(userId);
+            _logger.LogInformation($"*{GetType().Name}* total items to check-out: {items.Count}");
+            var orderId = await _httpClient.SendAsync<int, object>(
+                $"{_orderBaseUrl}/orders/{userId}", 
+                HttpMethod.Post, items);
+            _logger.LogInformation($"*{GetType().Name}* check-out completed with order id: {orderId}");
+            await RemoveAll(userId);
+            return orderId;
+        }
+        catch (Exception e)
+        {
+            _logger.LogError(e.Message);
+            throw;
+        }
     }
 }

@@ -1,5 +1,7 @@
+using System.Net;
 using System.Text;
 using Basket.Host.Services.Interfaces;
+using ExceptionHandler;
 using IdentityModel.Client;
 using Newtonsoft.Json;
 
@@ -40,9 +42,19 @@ public class HttpClientService: IHttpClientService
             _logger.LogInformation($"*{GetType().Name}* response: {response}");
 
             return response;
+        } 
+        if (result.StatusCode == HttpStatusCode.BadRequest)
+        {
+            var response = await result.Content.ReadAsStringAsync();
+            _logger.LogInformation($"*{GetType().Name}* response: {response}");
+            throw new IllegalArgumentException(response);
         }
-   
-
+        if (result.StatusCode == HttpStatusCode.NotFound)
+        {
+            var response = await result.Content.ReadAsStringAsync();
+            _logger.LogInformation($"*{GetType().Name}* response: {response}");
+            throw new NotFoundException(response);
+        }
 
         return default !;
     }

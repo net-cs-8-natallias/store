@@ -31,7 +31,7 @@ public class ItemRepository: IItemRepository
                     if (item.Quantity < i.Quantity)
                     {
                         _logger.LogError($"*{GetType().Name}* item with id: {i.ItemId} is not available in stock with quantity: {i.Quantity}");
-                        throw new NotFoundException($"Item with id: {i.ItemId} is not available in stock with quantity: {i.Quantity}");
+                        throw new IllegalArgumentException($"Item with id: {i.ItemId} is not available in stock with quantity: {i.Quantity}");
                     }
                     _logger.LogInformation($"*{GetType().Name}* decreasing quantity" +
                                            $" from {item.Quantity} to {item.Quantity - i.Quantity} " +
@@ -48,7 +48,7 @@ public class ItemRepository: IItemRepository
             {
                 await transaction.RollbackAsync();
                 _logger.LogError($"*{GetType().Name}* {ex.Message}");
-                throw new IllegalArgumentException(ex.Message);
+                throw; 
             }
         }
         

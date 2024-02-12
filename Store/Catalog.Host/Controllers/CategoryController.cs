@@ -43,11 +43,11 @@ public class CategoryController: ControllerBase
         return Ok(categoryId);
     }
 
-    [HttpPut("categories")]
-    public async Task<ActionResult> UpdateCategory(ItemCategory category)
+    [HttpPut("categories/{id}")]
+    public async Task<ActionResult> UpdateCategory(int id, CategoryDto category)
     {
-        _logger.LogInformation($"*{GetType().Name}* request to update category with id: {category.Id}");
-        var updatedCategory = await _service.UpdateInCatalog(category);
+        _logger.LogInformation($"*{GetType().Name}* request to update category with id: {id}");
+        var updatedCategory = await _service.UpdateInCatalog(id, category);
         return Ok(updatedCategory);
     }
 

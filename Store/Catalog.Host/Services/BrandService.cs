@@ -20,7 +20,7 @@ public class BrandService: ICatalogService<ItemBrand, BrandDto>
     public async Task<List<ItemBrand>> GetCatalog()
     {
         var brands =  await _brandRepository.GetCatalog();
-        _logger.LogInformation($"*{GetType().Name}* found {brands.Count} brands: {brands.ToString()}");
+        _logger.LogInformation($"*{GetType().Name}* found {brands.Count} brands: {string.Join(", ", brands)}");
         
         return brands;
     }
@@ -44,9 +44,13 @@ public class BrandService: ICatalogService<ItemBrand, BrandDto>
         return id;
     }
 
-    public async Task<ItemBrand> UpdateInCatalog(ItemBrand item)
+    public async Task<ItemBrand> UpdateInCatalog(int id, BrandDto item)
     {
-        var brand =  await _brandRepository.UpdateInCatalog(item);
+        var brand =  await _brandRepository.UpdateInCatalog(new ItemBrand()
+        {
+            Id = id,
+            Brand = item.Brand
+        });
         _logger.LogInformation($"*{GetType().Name}* brand was updated to {brand.ToString()}");
 
         return brand;

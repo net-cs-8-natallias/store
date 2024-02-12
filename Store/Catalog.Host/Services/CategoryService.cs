@@ -20,7 +20,7 @@ public class CategoryService: ICatalogService<ItemCategory, CategoryDto>
     public async Task<List<ItemCategory>> GetCatalog()
     {
         var categories = await _categoryRepository.GetCatalog();
-        _logger.LogInformation($"*{GetType().Name}* found {categories.Count} categories: {categories.ToString()}");
+        _logger.LogInformation($"*{GetType().Name}* found {categories.Count} categories: {string.Join(", ", categories)}");
 
         return categories;
     }
@@ -44,9 +44,13 @@ public class CategoryService: ICatalogService<ItemCategory, CategoryDto>
         return id;
     }
 
-    public async Task<ItemCategory> UpdateInCatalog(ItemCategory item)
+    public async Task<ItemCategory> UpdateInCatalog(int id, CategoryDto item)
     {
-        var category = await _categoryRepository.UpdateInCatalog(item);
+        var category = await _categoryRepository.UpdateInCatalog(new ItemCategory()
+        {
+            Id = id,
+            Category = item.Category
+        });
         _logger.LogInformation($"*{GetType().Name}* category was updated to: {category.ToString()}");
 
         return category;

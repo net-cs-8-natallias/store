@@ -43,11 +43,11 @@ public class TypeController: ControllerBase
         return Ok(typeId);
     }
 
-    [HttpPut("types")]
-    public async Task<ActionResult> UpdateType(ItemType type)
+    [HttpPut("types/{id}")]
+    public async Task<ActionResult> UpdateType(int id, TypeDto type)
     {
-        _logger.LogInformation($"*{GetType().Name}* request to update type with id: {type.Id}");
-        var updatedType = await _service.UpdateInCatalog(type);
+        _logger.LogInformation($"*{GetType().Name}* request to update type with id: {id}");
+        var updatedType = await _service.UpdateInCatalog(id, type);
         return Ok(updatedType);
     }
 

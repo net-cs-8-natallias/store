@@ -12,7 +12,12 @@ public class ItemType
     
     public override bool Equals(object? obj)
     {
-        return base.Equals(obj);
+        if (obj == null || GetType() != obj.GetType())
+        {
+            return false;
+        }
+        ItemType other = (ItemType)obj;
+        return Id == other.Id && Type == other.Type;
     }
 
     public override int GetHashCode()
