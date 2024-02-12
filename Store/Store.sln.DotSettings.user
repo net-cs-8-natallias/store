@@ -1,0 +1,11 @@
+﻿<wpf:ResourceDictionary xml:space="preserve" xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml" xmlns:s="clr-namespace:System;assembly=mscorlib" xmlns:ss="urn:shemas-jetbrains-com:settings-storage-xaml" xmlns:wpf="http://schemas.microsoft.com/winfx/2006/xaml/presentation">
+	<s:String x:Key="/Default/Environment/UnitTesting/UnitTestSessionStore/Sessions/=f9757d6c_002D1679_002D4287_002Db773_002D85313d76e601/@EntryIndexedValue">&lt;SessionState ContinuousTestingMode="0" IsActive="True" Name="AddAsync_Success" xmlns="urn:schemas-jetbrains-com:jetbrains-ut-session"&gt;
+  &lt;TestAncestor&gt;
+    &lt;TestId&gt;xUnit::0DE04C53-6636-4E5D-94AD-C2D12BCF0F6F::net8.0::Catalog.Host.Test.Services.BrandServiceTest&lt;/TestId&gt;
+    &lt;TestId&gt;xUnit::0DE04C53-6636-4E5D-94AD-C2D12BCF0F6F::net8.0::Catalog.Host.Test.Services.TypeServiceTest&lt;/TestId&gt;
+    &lt;TestId&gt;xUnit::0DE04C53-6636-4E5D-94AD-C2D12BCF0F6F::net8.0::Catalog.Host.Test.Services.CategoryServiceTest&lt;/TestId&gt;
+    &lt;TestId&gt;xUnit::0DE04C53-6636-4E5D-94AD-C2D12BCF0F6F::net8.0::Catalog.Host.Test.Services.ItemServiceTest&lt;/TestId&gt;
+    &lt;TestId&gt;xUnit::0DE04C53-6636-4E5D-94AD-C2D12BCF0F6F::net8.0::Catalog.Host.Test.Services.CatalogItemServiceTest&lt;/TestId&gt;
+    &lt;TestId&gt;xUnit::0DE04C53-6636-4E5D-94AD-C2D12BCF0F6F::net8.0::Catalog.Host.Test.Services.BffCatalogServiceTest&lt;/TestId&gt;
+  &lt;/TestAncestor&gt;
+&lt;/SessionState&gt;</s:String></wpf:ResourceDictionary>
