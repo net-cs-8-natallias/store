@@ -1,8 +1,15 @@
+using System.ComponentModel.DataAnnotations;
+
 namespace Catalog.Host.Models;
 
 public class OrderItem
 {
+    [Required(ErrorMessage = "Item id is required")]
+    [Range(1, int.MaxValue, ErrorMessage = "Item id must be greater than 0")]
     public int ItemId { get; set; }
+    
+    [Required(ErrorMessage = "Quantity is required")]
+    [Range(1, 35, ErrorMessage = "Quantity must be in range [1 - 35]")]
     public int Quantity { get; set; }
     
     public override string ToString()
@@ -12,7 +19,14 @@ public class OrderItem
     
     public override bool Equals(object? obj)
     {
-        return base.Equals(obj);
+        if (obj == null || GetType() != obj.GetType())
+        {
+            return false;
+        }
+        
+        OrderItem other = (OrderItem)obj;
+        return ItemId == other.ItemId
+               && Quantity == other.Quantity;
     }
 
     public override int GetHashCode()

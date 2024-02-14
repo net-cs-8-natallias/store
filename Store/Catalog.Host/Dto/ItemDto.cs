@@ -11,6 +11,7 @@ public class ItemDto
     [Required(ErrorMessage = "Quantity is required")]
     [Range(0, 2000, ErrorMessage = "Quantity must be between 1 and 2000")] 
     public int Quantity { get; set; }
+    
     [Required(ErrorMessage = "Size is required")]
     [StringLength(40, ErrorMessage = "String length should be less than 40")]
     public string? Size { get; set; }
