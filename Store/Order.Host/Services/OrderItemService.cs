@@ -47,9 +47,16 @@ public class OrderItemService: IOrderService<OrderItem, OrderItemDto>
         return id;
     }
 
-    public async Task<OrderItem> UpdateItem(OrderItem item)
+    public async Task<OrderItem> UpdateItem(int id, OrderItemDto item)
     {
-        var orderItem = await _itemRepository.UpdateItem(item);
+        var orderItem = await _itemRepository.UpdateItem(new OrderItem()
+        {
+            Id = id,
+            OrderId = item.OrderId,
+            ItemId = item.ItemId,
+            SubPrice = item.SubPrice,
+            Quantity = item.Quantity
+        });
         _logger.LogInformation($"*{GetType().Name}* updating order item to: {orderItem.ToString()}");
 
         return orderItem;

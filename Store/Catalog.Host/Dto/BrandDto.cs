@@ -4,8 +4,8 @@ namespace Catalog.Host.Dto;
 
 public class BrandDto
 {
-    [Required]
-    [StringLength(25)]
+    [Required(ErrorMessage = "Brand is required")]
+    [StringLength(25, ErrorMessage = "String length should be less than 25")]
     public string? Brand { get; set; }
     
     public override string ToString()
@@ -15,7 +15,12 @@ public class BrandDto
     
     public override bool Equals(object? obj)
     {
-        return base.Equals(obj);
+        if (obj == null || GetType() != obj.GetType())
+        {
+            return false;
+        }
+        BrandDto other = (BrandDto)obj;
+        return Brand == other.Brand;
     }
 
     public override int GetHashCode()

@@ -44,6 +44,12 @@ public class TypeServiceTest
         var result = await _typeService.AddToCatalog(_typeDto);
         result.Should().Be(_expectedId);
     }
+    
+    [Fact]
+    public async Task AddTypeAsync_Failed()
+    {
+        // TODO
+    }
 
     [Fact]
     public async Task UpdateTypeAsync_Success()

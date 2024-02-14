@@ -47,9 +47,16 @@ public class CatalogOrderService: IOrderService<CatalogOrder, CatalogOrderDto>
         return orderId;
     }
 
-    public async Task<CatalogOrder> UpdateItem(CatalogOrder item)
+    public async Task<CatalogOrder> UpdateItem(int id, CatalogOrderDto item)
     {
-        var order = await _orderRepository.UpdateItem(item);
+        var order = await _orderRepository.UpdateItem(new CatalogOrder()
+        {
+            Id = id,
+            Date = item.Date,
+            TotalQuantity = item.TotalQuantity,
+            TotalPrice = item.TotalPrice,
+            UserId = item.UserId
+        });
         _logger.LogInformation($"*{GetType().Name}* updated order: {order.ToString()}");
 
         return order;

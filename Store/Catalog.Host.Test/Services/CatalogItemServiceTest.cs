@@ -58,6 +58,12 @@ public class CatalogItemServiceTest
         var result = await _catalogItemService.AddToCatalog(_catalogItemDto);
         result.Should().Be(_expectedId);
     }
+    
+    [Fact]
+    public async Task AddCatalogItemAsync_Failed()
+    {
+        // TODO
+    }
 
     [Fact]
     public async Task UpdateCatalogItemAsync_Success()

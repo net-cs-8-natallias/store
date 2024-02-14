@@ -87,27 +87,39 @@ public class BffCatalogServiceTest
     }
     
     [Fact]
-    public async Task FindCatalogItemByIdAsync_Success()
+    public async Task IncreaseItemQuantity_Success()
     {
-        _catalogItemRepo.Setup(s => s
-                .FindById(It.IsAny<int>()))
-            .ReturnsAsync(_givenCatalogItem);
-
-        var result = await _bffService.GetCatalogItem(_givenId);
-        result.Should().NotBeNull();
-        result.Should().Be(_expectedCatalogItem);
+        // TODO
     }
     
     [Fact]
-    public async Task FindCatalogItemByIdAsync_Failed()
+    public async Task IncreaseItemQuantity_Failed()
     {
         // TODO
-        _catalogItemRepo.Setup(s => s
-                .FindById(It.IsAny<int>()))
-            .ThrowsAsync(new Exception($"CatalogItem with ID: {_notExistId} does not exist"));
-
-        var result = async () => await _bffService.GetCatalogItem(_notExistId);
-        await Xunit.Assert.ThrowsAsync<Exception>(result);
+    }
+    
+    [Fact]
+    public async Task DecreaseItemQuantity_Success()
+    {
+        // TODO
+    }
+    
+    [Fact]
+    public async Task DecreaseItemQuantity_Failed()
+    {
+        // TODO
+    }
+    
+    [Fact]
+    public async Task GetItemsByCatalogItemId_Success()
+    {
+        // TODO
+    }
+    
+    [Fact]
+    public async Task GetItemsByCatalogItemId_Failed()
+    {
+        // TODO
     }
     
     [Fact]
@@ -133,6 +145,7 @@ public class BffCatalogServiceTest
     [Fact]
     public async Task GetCatalogItemsAsync_Failed()
     {
+        // TODO
         var expected = new List<CatalogItem>();
         _catalogItemRepo.Setup(s => s
             .GetCatalog()).ReturnsAsync(new List<CatalogItem>());
@@ -140,6 +153,29 @@ public class BffCatalogServiceTest
         var result = await _bffService.GetCatalogItems(_filter);
         result.Should().BeEmpty();
         result.Should().Equal(expected);
+    }
+    
+    [Fact]
+    public async Task FindCatalogItemByIdAsync_Success()
+    {
+        _catalogItemRepo.Setup(s => s
+                .FindById(It.IsAny<int>()))
+            .ReturnsAsync(_givenCatalogItem);
+
+        var result = await _bffService.GetCatalogItem(_givenId);
+        result.Should().NotBeNull();
+        result.Should().Be(_expectedCatalogItem);
+    }
+    
+    [Fact]
+    public async Task FindCatalogItemByIdAsync_Failed()
+    {
+        _catalogItemRepo.Setup(s => s
+                .FindById(It.IsAny<int>()))
+            .ThrowsAsync(new Exception($"CatalogItem with ID: {_notExistId} does not exist"));
+
+        var result = async () => await _bffService.GetCatalogItem(_notExistId);
+        await Xunit.Assert.ThrowsAsync<Exception>(result);
     }
     
     [Fact]

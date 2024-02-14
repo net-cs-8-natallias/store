@@ -17,6 +17,24 @@ public class CatalogOrderRepository: ICatalogOrderRepository
         _dbContext = dbContext;
         _logger = logger;
     }
+    
+    public async Task BeginTransaction()
+    {
+        _logger.LogInformation($"*{GetType().Name}* Starting transaction");
+        await _dbContext.Database.BeginTransactionAsync();
+    }
+
+    public async Task CommitTransaction()
+    {
+        _logger.LogInformation($"*{GetType().Name}* Commiting transaction");
+        await _dbContext.Database.CommitTransactionAsync();
+    }
+
+    public async Task RollbackTransaction()
+    {
+        _logger.LogInformation($"*{GetType().Name}* Rolling back transaction");
+        await _dbContext.Database.RollbackTransactionAsync();
+    }
     public async Task<List<CatalogOrder>> GetOrdersByUserId(string userId)
     {
         IQueryable<CatalogOrder> query = _dbContext.CatalogOrders;
@@ -25,7 +43,7 @@ public class CatalogOrderRepository: ICatalogOrderRepository
         
         return await query.ToListAsync();
     }
-    
+
     public async Task<List<CatalogOrder>> GetItems()
     {
         _logger.LogInformation($"*{GetType().Name}* returning all orders");
@@ -65,22 +83,37 @@ public class CatalogOrderRepository: ICatalogOrderRepository
         await _dbContext.SaveChangesAsync();
         return newOrder;
     }
-
+    
     public async Task<CatalogOrder> RemoveItem(int id)
     {
-        var order = await FindById(id);
-        _logger.LogInformation($"*{GetType().Name}* removing order with id: {order.Id}");
-        IQueryable<OrderItem> query = _dbContext.OrderItems;
-        query = query.Where(item => item.OrderId == order.Id);
-        foreach (var i in await query.ToListAsync())
+        using var transaction = await _dbContext.Database.BeginTransactionAsync();
+        _logger.LogInformation($"*{GetType().Name}* Starting transaction");
+        try
         {
-            _dbContext.OrderItems.Remove(i);
-            _logger.LogInformation($"*{GetType().Name}* removing item with id: {i.Id}");
+            var order = await FindById(id);
+            _logger.LogInformation($"*{GetType().Name}* removing order with id: {order.Id}");
+            IQueryable<OrderItem> query = _dbContext.OrderItems;
+            query = query.Where(item => item.OrderId == order.Id);
+            foreach (var i in await query.ToListAsync())
+            {
+                _dbContext.OrderItems.Remove(i);
+                _logger.LogInformation($"*{GetType().Name}* removing item with id: {i.Id}");
+            }
             await _dbContext.SaveChangesAsync();
+            _dbContext.CatalogOrders.Remove(order);
+            await _dbContext.SaveChangesAsync();
+            await transaction.CommitAsync();
+            _logger.LogInformation($"*{GetType().Name}* Commiting transaction");
+
+            return order;
         }
-        _dbContext.CatalogOrders.Remove(order);
-        await _dbContext.SaveChangesAsync();
-        return order;
+        catch (Exception ex)
+        {
+            _logger.LogError($"Error occurred while removing order: {ex.Message}");
+            await transaction.RollbackAsync();
+            _logger.LogInformation($"*{GetType().Name}* Rolling back transaction");
+            throw;
+        }
     }
     
 }

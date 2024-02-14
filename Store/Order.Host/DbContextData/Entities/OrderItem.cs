@@ -2,6 +2,7 @@ namespace Order.Host.DbContextData.Entities;
 
 public class OrderItem
 {
+    
     public int Id { get; set; }
     public int OrderId { get; set; }
     public CatalogOrder? Order { get; set; }
@@ -16,7 +17,14 @@ public class OrderItem
     }
     public override bool Equals(object? obj)
     {
-        return base.Equals(obj);
+        if (obj == null || GetType() != obj.GetType())
+        {
+            return false;
+        }
+        OrderItem other = (OrderItem)obj;
+        return Id == other.Id && OrderId == other.OrderId 
+             && ItemId == other.ItemId && SubPrice == other.SubPrice 
+             && Quantity == other.Quantity;
     }
 
     public override int GetHashCode()

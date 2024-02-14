@@ -90,7 +90,7 @@ builder.Services.AddTransient<IOrderRepository<OrderItem>, OrderItemRepository>(
 
 builder.Services.AddTransient<IOrderService<CatalogOrder, CatalogOrderDto>, CatalogOrderService>();
 builder.Services.AddTransient<IOrderService<OrderItem, OrderItemDto>, OrderItemService>();
-builder.Services.AddTransient<IOrderBffService, OrderBffService>();
+builder.Services.AddTransient<IOrderApiService, OrderApiService>();
 
 var app = builder.Build();
 
