@@ -44,12 +44,6 @@ public class CategoryServiceTest
         var result = await _categoryService.AddToCatalog(_categoryDto);
         result.Should().Be(_expectedId);
     }
-    
-    [Fact]
-    public async Task AddCategoryAsync_Failed()
-    {
-        // TODO
-    }
 
     [Fact]
     public async Task UpdateCategoryAsync_Success()

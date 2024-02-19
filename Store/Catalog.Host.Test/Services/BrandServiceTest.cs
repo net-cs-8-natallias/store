@@ -45,12 +45,6 @@ public class BrandServiceTest
         var result = await _brandService.AddToCatalog(_brandDto);
         result.Should().Be(_expectedId);
     }
-    
-    [Fact]
-    public async Task AddBrandAsync_Failed()
-    {
-        // TODO
-    }
 
     [Fact]
     public async Task UpdateBrandAsync_Success()

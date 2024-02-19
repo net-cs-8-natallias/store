@@ -14,5 +14,14 @@
     &lt;TestId&gt;xUnit::1ADCA570-FCDA-4B85-BF63-3B32E8E5D33E::net8.0::Order.Host.Test.Services.OrderBffServiceTest.GetOrdersByUserIdAsyncTest_Success&lt;/TestId&gt;
     &lt;TestId&gt;xUnit::1ADCA570-FCDA-4B85-BF63-3B32E8E5D33E::net8.0::Order.Host.Test.Services.OrderBffServiceTest.GetOrdersByUserIdAsyncTest_Failed&lt;/TestId&gt;
     &lt;TestId&gt;xUnit::1ADCA570-FCDA-4B85-BF63-3B32E8E5D33E::net8.0::Order.Host.Test.Services.OrderBffServiceTest&lt;/TestId&gt;
+    &lt;TestId&gt;xUnit::65C6CC1E-0577-483E-8A68-DB466D3A87DF::net8.0::Basket.Host.Test.Services.CacheServiceTest.AddOrUpdateAsync_Failed&lt;/TestId&gt;
+    &lt;TestId&gt;xUnit::65C6CC1E-0577-483E-8A68-DB466D3A87DF::net8.0::Basket.Host.Test.Services.CacheServiceTest.AddOrUpdateAsync_Success&lt;/TestId&gt;
+    &lt;TestId&gt;xUnit::65C6CC1E-0577-483E-8A68-DB466D3A87DF::net8.0::Basket.Host.Test.Services.CacheServiceTest.AddOrUpdateAsync_KeyExists_IncrementValue&lt;/TestId&gt;
+    &lt;TestId&gt;xUnit::65C6CC1E-0577-483E-8A68-DB466D3A87DF::net8.0::Basket.Host.Test.Services.CacheServiceTest.AddOrUpdateAsync_KeyDoesNotExist_SetNewValue&lt;/TestId&gt;
+    &lt;TestId&gt;xUnit::65C6CC1E-0577-483E-8A68-DB466D3A87DF::net8.0::Basket.Host.Test.Services.CacheServiceTest.RemoveOrUpdateAsync_ValueMatches_DeleteKey&lt;/TestId&gt;
+    &lt;TestId&gt;xUnit::65C6CC1E-0577-483E-8A68-DB466D3A87DF::net8.0::Basket.Host.Test.Services.CacheServiceTest.RemoveOrUpdateAsync_ValueDoesNotMatch_DecreaseValue&lt;/TestId&gt;
+    &lt;TestId&gt;xUnit::65C6CC1E-0577-483E-8A68-DB466D3A87DF::net8.0::Basket.Host.Test.Services.CacheServiceTest.GetAsync_ReturnsHashEntries&lt;/TestId&gt;
+    &lt;TestId&gt;xUnit::65C6CC1E-0577-483E-8A68-DB466D3A87DF::net8.0::Basket.Host.Test.Services.CacheServiceTest.RemoveAllAsync_RemovesAllKeys&lt;/TestId&gt;
+    &lt;TestId&gt;xUnit::65C6CC1E-0577-483E-8A68-DB466D3A87DF::net8.0::Basket.Host.Test.Services.CacheServiceTest&lt;/TestId&gt;
   &lt;/TestAncestor&gt;
 &lt;/SessionState&gt;</s:String></wpf:ResourceDictionary>

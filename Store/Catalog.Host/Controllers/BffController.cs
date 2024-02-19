@@ -5,7 +5,7 @@ using Microsoft.AspNetCore.Mvc;
 
 namespace Catalog.Host.Controllers;
 
-//[Authorize(Policy = "ApiScope")]
+// [Authorize(Policy = "ApiScope")]
 [ApiController]
 [Route("catalog-bff-controller")]
 public class BffController: ControllerBase
@@ -22,6 +22,7 @@ public class BffController: ControllerBase
         _service = service;
     }
 
+    [Authorize(Policy = "ApiScope")]
     [HttpPut("items/increase")]
     public async Task<IActionResult> IncreaseItemQuantity(List<OrderItem> items)
     {
@@ -30,6 +31,7 @@ public class BffController: ControllerBase
         return Ok();
     }
     
+    [Authorize(Policy = "ApiScope")]
     [HttpPut("items/decrease")]
     public async Task<IActionResult> DecreaseItemQuantity(List<OrderItem> items)
     {

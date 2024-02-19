@@ -48,12 +48,6 @@ public class CatalogOrderServiceTest
         var result = await _orderService.AddItem(_orderDto);
         result.Should().Be(_expectedId);
     }
-    
-    [Fact]
-    public async Task AddOrderAsync_Failed()
-    {
-        // TODO
-    }
 
     [Fact]
     public async Task UpdateOrderAsync_Success()

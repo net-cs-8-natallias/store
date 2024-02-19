@@ -64,13 +64,7 @@ public class OrderApiServiceTest
         _catalogOrderRepo.Verify(s => s.UpdateItem(It.IsAny<CatalogOrder>()), Times.Once);
 
     }
-    
-    // [Fact]
-    // public async Task CreateOrderAsyncTest_Failed()
-    // {
-    //     // TODO
-    // }
-    
+
     [Fact]
     public async Task CreateOrderAsyncTest_Failed()
     {

@@ -60,12 +60,6 @@ public class CatalogItemServiceTest
     }
     
     [Fact]
-    public async Task AddCatalogItemAsync_Failed()
-    {
-        // TODO
-    }
-
-    [Fact]
     public async Task UpdateCatalogItemAsync_Success()
     {
         _catalogItemRepo.Setup(s => s

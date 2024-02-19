@@ -49,12 +49,6 @@ public class ItemServiceTest
         var result = await _itemService.AddToCatalog(_itemDto);
         result.Should().Be(_expectedId);
     }
-    
-    [Fact]
-    public async Task AddItemAsync_Failed()
-    {
-        // TODO
-    }
 
     [Fact]
     public async Task UpdateItemAsync_Success()

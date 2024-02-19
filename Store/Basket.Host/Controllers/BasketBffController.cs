@@ -8,7 +8,7 @@ using Microsoft.AspNetCore.Mvc;
 
 namespace Basket.Host.Controllers;
 
-//[Authorize(Policy = "ApiScope")]
+[Authorize(Policy = "ApiScope")]
 [ApiController]
 [Route("basket-bff-controller")]
 public class BasketBffController: ControllerBase

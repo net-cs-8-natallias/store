@@ -33,7 +33,7 @@ public class BffCatalogServiceTest
     private readonly int _categoryId = 1;
     private readonly string _descroption = "catalog item description";
     
-    private readonly int _catalogItemsId = 1;
+    private readonly int _catalogItemId = 1;
     private readonly int _quantity = 2;
     private readonly string _size = "s";
     private readonly Item _givenItem;
@@ -52,6 +52,7 @@ public class BffCatalogServiceTest
     private readonly string _categoryName = "type-name";
 
     private readonly CatalogFilter _filter;
+    private readonly List<OrderItem> _orderItems;
 
     public BffCatalogServiceTest()
     {
@@ -72,66 +73,106 @@ public class BffCatalogServiceTest
             ItemBrandId = _brandId, ItemTypeId = _typeId, Price = _price, 
             Image = _image, ItemCategoryId = _categoryId, Description = _descroption};
         _givenItem = new Item { Id = _expectedId, 
-            CatalogItemId = _catalogItemsId, Quantity = _quantity, Size = _size};
+            CatalogItemId = _catalogItemId, Quantity = _quantity, Size = _size};
         _expectedItem = new Item { Id = _expectedId, 
-            CatalogItemId = _catalogItemsId, Quantity = _quantity, Size = _size};
+            CatalogItemId = _catalogItemId, Quantity = _quantity, Size = _size};
         _givenBrand = new ItemBrand { Id = _expectedId, Brand = _brandName };
         _expectedBrand = new ItemBrand { Id = _expectedId, Brand = _brandName };
         _givenType = new ItemType { Id = _expectedId, Type = _typeName };
         _expectedType = new ItemType { Id = _expectedId, Type = _typeName };
         _givenCategory = new ItemCategory { Id = _expectedId, Category = _categoryName };
         _expectedCategory = new ItemCategory { Id = _expectedId, Category = _categoryName };
-        
-        // TODO
         _filter = new CatalogFilter { Brand = _brandId, Category = _categoryId, Type = _typeId };
+        _orderItems = new List<OrderItem>() { new OrderItem(){ItemId = 1, Quantity = 1} };
     }
     
     [Fact]
     public async Task IncreaseItemQuantity_Success()
     {
-        // TODO
+        _itemRepo.Setup(s => s
+                .FindById(It.IsAny<int>()))
+            .ReturnsAsync(_givenItem);
+        _itemRepo.Setup(s => s
+                  .UpdateInCatalog(It.IsAny<Item>()))
+              .ReturnsAsync(_givenItem);
+
+        await _bffService.IncreaseItemQuantity(_orderItems);
     }
     
     [Fact]
     public async Task IncreaseItemQuantity_Failed()
     {
-        // TODO
+        _itemRepo.Setup(s => s
+                .FindById(It.IsAny<int>()))
+            .ReturnsAsync(_givenItem);
+        _itemRepo.Setup(s => s
+                  .UpdateInCatalog(It.IsAny<Item>()))
+            .ThrowsAsync(new Exception($"Item with ID: {_notExistId} does not exist"));
+
+        var result = async () => await _bffService.IncreaseItemQuantity(_orderItems);;
+        await Xunit.Assert.ThrowsAsync<Exception>(result);
+
+        
     }
     
     [Fact]
     public async Task DecreaseItemQuantity_Success()
     {
-        // TODO
+        _itemRepo.Setup(s => s.DecreaseItemQuantity(It.IsAny<List<OrderItem>>()))
+            .Returns(Task.CompletedTask);
+        await _bffService.DecreaseItemQuantity(_orderItems);
+        _itemRepo.Verify(s => s.DecreaseItemQuantity(It.IsAny<List<OrderItem>>()), Times.Once);
     }
     
     [Fact]
     public async Task DecreaseItemQuantity_Failed()
     {
-        // TODO
+        _itemRepo.Setup(s => s.DecreaseItemQuantity(It.IsAny<List<OrderItem>>()))
+            .ThrowsAsync(new Exception($"Item with id: 1 is not available in stock with quantity: 1"));
+        await Xunit.Assert.ThrowsAsync<Exception>(() => _bffService.DecreaseItemQuantity(_orderItems));
     }
+
     
     [Fact]
     public async Task GetItemsByCatalogItemId_Success()
     {
-        // TODO
+        var expected = new List<Item>
+        {
+            _givenItem, _givenItem
+        };
+        _itemRepo.Setup(s => s
+            .GetItemsByCatalogItemId(It.IsAny<int>())).ReturnsAsync(new List<Item>
+        {
+            _givenItem, _givenItem
+        });
+
+        var result = await _bffService.GetItemsByCatalogItemId(_catalogItemId);
+        result.Should().NotBeNull();
+        result.Should().NotBeEmpty();
+        result.Should().Equal(expected);
     }
     
     [Fact]
     public async Task GetItemsByCatalogItemId_Failed()
     {
-        // TODO
+        var expected = new List<Item> {};
+        _itemRepo.Setup(s => s
+            .GetItemsByCatalogItemId(It.IsAny<int>())).ReturnsAsync(new List<Item> { });
+
+        var result = await _bffService.GetItemsByCatalogItemId(_catalogItemId);
+        result.Should().BeEmpty();
+        result.Should().Equal(expected);
     }
     
     [Fact]
     public async Task GetCatalogItemsAsync_Success()
     {
-        // TODO
         var expected = new List<CatalogItem>
         {
             _givenCatalogItem, _givenCatalogItem
         };
         _catalogItemRepo.Setup(s => s
-            .GetCatalog()).ReturnsAsync(new List<CatalogItem>
+            .GetCatalog(It.IsAny<CatalogFilter>())).ReturnsAsync(new List<CatalogItem>
         {
             _givenCatalogItem, _givenCatalogItem
         });
@@ -145,10 +186,9 @@ public class BffCatalogServiceTest
     [Fact]
     public async Task GetCatalogItemsAsync_Failed()
     {
-        // TODO
         var expected = new List<CatalogItem>();
         _catalogItemRepo.Setup(s => s
-            .GetCatalog()).ReturnsAsync(new List<CatalogItem>());
+            .GetCatalog(It.IsAny<CatalogFilter>())).ReturnsAsync(new List<CatalogItem>());
 
         var result = await _bffService.GetCatalogItems(_filter);
         result.Should().BeEmpty();

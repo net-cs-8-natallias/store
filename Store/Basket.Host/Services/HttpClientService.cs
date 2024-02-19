@@ -21,7 +21,7 @@ public class HttpClientService: IHttpClientService
     public async Task<TResponse> SendAsync<TResponse, TRequest>(string url, HttpMethod method, TRequest? content)
     {
         var client = _clientFactory.CreateClient();
-        //client.SetBearerToken(await GetClientCredentialsTokenAsync());
+        client.SetBearerToken(await GetClientCredentialsTokenAsync());
 
         var httpMessage = new HttpRequestMessage();
         httpMessage.RequestUri = new Uri(url);
