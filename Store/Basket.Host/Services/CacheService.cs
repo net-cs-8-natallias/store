@@ -32,8 +32,6 @@ public class CacheService: ICacheService
             _logger.LogInformation($"*{GetType().Name}* setting new key: {key} with value: {value} by id: {id}");
             await redis.HashSetAsync(id, key, value);
         }
-
-        
     }
 
     public async Task RemoveOrUpdateAsync(string id, int key, int value)

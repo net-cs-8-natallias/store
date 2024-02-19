@@ -7,7 +7,7 @@ namespace Catalog.Host.Dto;
 public class CatalogItemDto
 {
     [Required(ErrorMessage = "Name is required")]
-    [StringLength(10)]
+    [StringLength(35, ErrorMessage = "String length should be less than 35")]
     public string? Name { get; set; }
     
     [Required(ErrorMessage = "Brand id is required")]
@@ -23,14 +23,14 @@ public class CatalogItemDto
     public decimal Price { get; set; }
     
     [Required(ErrorMessage = "Image is required")]
-    [StringLength(40)]
+    [StringLength(40, ErrorMessage = "String length should be less than 40")]
     public string? Image { get; set; }
     
     [Required(ErrorMessage = "Category id is required")]
     [Range(1, int.MaxValue, ErrorMessage = "Category id must be greater than 0")]
     public int ItemCategoryId { get; set; }
     
-    [StringLength(100)]
+    [StringLength(100, ErrorMessage = "String length should be less than 100")]
     public string? Description { get; set; }
     
     public override string ToString()
@@ -43,7 +43,16 @@ public class CatalogItemDto
     
     public override bool Equals(object? obj)
     {
-        return base.Equals(obj);
+        if (obj == null || GetType() != obj.GetType())
+        {
+            return false;
+        }
+        CatalogItemDto other = (CatalogItemDto)obj;
+        return Name == other.Name 
+                              && ItemBrandId == other.ItemBrandId 
+                              && ItemTypeId == other.ItemTypeId
+                              && Price == other.Price 
+                              && ItemCategoryId == other.ItemCategoryId;
     }
 
     public override int GetHashCode()

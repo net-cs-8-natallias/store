@@ -11,7 +11,7 @@ public class BasketService: IBasketService
     private readonly ICacheService _cacheService;
     private readonly IHttpClientService _httpClient;
     private readonly string _catalogBaseUrl = "http://localhost:5288/catalog-bff-controller";
-    private readonly string _orderBaseUrl = "http://localhost:5230/order-bff-controller";
+    private readonly string _orderBaseUrl = "http://localhost:5230/order-api-controller";
 
     public BasketService(ILogger<BasketService> logger, 
         ICacheService cacheService, IHttpClientService httpClient)

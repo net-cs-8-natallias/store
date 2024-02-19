@@ -23,6 +23,7 @@ public class ItemRepository: IItemRepository
     {
         using (var transaction = await _dbContext.Database.BeginTransactionAsync())
         {
+            _logger.LogInformation($"*{GetType().Name}* Starting transaction");
             try
             {
                 foreach (var i in items)
@@ -42,11 +43,13 @@ public class ItemRepository: IItemRepository
                 
                 await _dbContext.SaveChangesAsync(); 
                 await transaction.CommitAsync(); 
+                _logger.LogInformation($"*{GetType().Name}* Commiting transaction");
                 _logger.LogInformation($"*{GetType().Name}* {items.Count} items was updated");
             }
             catch (NotFoundException ex)
             {
                 await transaction.RollbackAsync();
+                _logger.LogInformation($"*{GetType().Name}* Rolling back transaction");
                 _logger.LogError($"*{GetType().Name}* {ex.Message}");
                 throw; 
             }

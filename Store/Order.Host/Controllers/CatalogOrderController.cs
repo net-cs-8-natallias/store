@@ -43,11 +43,11 @@ public class CatalogOrderController: ControllerBase
         return Ok(orderId);
     }
     
-    [HttpPut("orders")]
-    public async Task<IActionResult> UpdateOrder(CatalogOrder catalogOrder)
+    [HttpPut("orders/{id}")]
+    public async Task<IActionResult> UpdateOrder(int id, CatalogOrderDto catalogOrder)
     {
-        _logger.LogInformation($"*{GetType().Name}* request to update order with id: {catalogOrder.Id}");
-        var order = await _service.UpdateItem(catalogOrder);
+        _logger.LogInformation($"*{GetType().Name}* request to update order with id: {id}");
+        var order = await _service.UpdateItem(id, catalogOrder);
         return Ok(order);
     }
     

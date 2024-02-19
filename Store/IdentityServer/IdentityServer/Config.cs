@@ -129,14 +129,14 @@ namespace IdentityServer
                     RequireClientSecret = false,
                     AllowedGrantTypes = GrantTypes.Code,
                     AllowAccessTokensViaBrowser = true,
-                    RedirectUris = {"http://localhost:5173/signin-oidc"},
+                    RedirectUris = {"http://localhost:5173"},
                     PostLogoutRedirectUris = {"http://localhost:5173/signout-callback-oidc"},
                     AllowedCorsOrigins = {"http://localhost:5173"},
                     AllowedScopes = new List<string>
                     {
                         IdentityServerConstants.StandardScopes.OpenId,
                         IdentityServerConstants.StandardScopes.Profile,
-                        "catalog"
+                        "basket"
                     }
                 },
                 

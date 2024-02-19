@@ -15,7 +15,14 @@ public class CatalogOrder
     }
     public override bool Equals(object? obj)
     {
-        return base.Equals(obj);
+        if (obj == null || GetType() != obj.GetType())
+        {
+            return false;
+        }
+        CatalogOrder other = (CatalogOrder)obj;
+        return Id == other.Id && Date == other.Date 
+              && TotalQuantity == other.TotalQuantity && TotalPrice == other.TotalPrice 
+              && UserId == other.UserId;
     }
 
     public override int GetHashCode()

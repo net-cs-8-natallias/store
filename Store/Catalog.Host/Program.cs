@@ -59,13 +59,8 @@ builder.Services.AddSwaggerGen(options =>
 builder.Services.AddAuthentication("Bearer")
     .AddJwtBearer("Bearer", options =>
     {
-        // required audience of access tokens
-        
         options.Audience = "CatalogApi";
         options.RequireHttpsMetadata = false;
-
-
-        // auth server base endpoint (this will be used to search for disco doc)
         options.Authority = "http://localhost:7001";
     });
 
@@ -138,8 +133,6 @@ app.UseEndpoints(endpoints =>
     endpoints.MapDefaultControllerRoute().RequireAuthorization("ApiScope");
     endpoints.MapControllers();//.RequireAuthorization -> for all controllers
 });
-
-// app.MapControllers();
 
 CreateDbIfNotExists(app);
 

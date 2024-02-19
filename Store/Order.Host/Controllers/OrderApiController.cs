@@ -1,3 +1,4 @@
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Order.Host.Models;
 using Order.Host.Services.Interfaces;
@@ -5,16 +6,16 @@ using Order.Host.Services.Interfaces;
 namespace Order.Host.Controllers;
 
 
-// [Authorize(Policy = "ApiScope")]
+[Authorize(Policy = "ApiScope")]
 [ApiController]
-[Route("order-bff-controller")]
-public class OrderBffController: ControllerBase
+[Route("order-api-controller")]
+public class OrderApiController: ControllerBase
 {
-    private readonly ILogger<OrderBffController> _logger;
-    private readonly IOrderBffService _service;
+    private readonly ILogger<OrderApiController> _logger;
+    private readonly IOrderApiService _service;
 
-    public OrderBffController(ILogger<OrderBffController> logger,
-        IOrderBffService service)
+    public OrderApiController(ILogger<OrderApiController> logger,
+        IOrderApiService service)
     {
         _logger = logger;
         _service = service;

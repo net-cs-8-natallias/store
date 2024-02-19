@@ -123,15 +123,37 @@ public class CatalogItemRepository: ICatalogItemRepository
         
         return newItem;
     }
-
+    
     public async Task<CatalogItem> RemoveFromCatalog(int id)
     {
-        var item = await FindById(id);
-        _dbContext.CatalogItems.Remove(item);
-        await _dbContext.SaveChangesAsync();
-        _logger.LogInformation($"*{GetType().Name}* removing catalog item with id: {item.Id}");
-        
-        return item;
+        using var transaction = await _dbContext.Database.BeginTransactionAsync();
+        _logger.LogInformation($"*{GetType().Name}* Starting transaction");
+        try
+        {
+            var catalogItem = await FindById(id);
+            _logger.LogInformation($"*{GetType().Name}* removing catalog item with id: {catalogItem.Id}");
+            IQueryable<Item> query = _dbContext.Items;
+            query = query.Where(item => item.CatalogItemId == item.Id);
+            foreach (var i in await query.ToListAsync())
+            {
+                _dbContext.Items.Remove(i);
+                _logger.LogInformation($"*{GetType().Name}* removing item with id: {i.Id}");
+            }
+            await _dbContext.SaveChangesAsync();
+            _dbContext.CatalogItems.Remove(catalogItem);
+            await _dbContext.SaveChangesAsync();
+            await transaction.CommitAsync();
+            _logger.LogInformation($"*{GetType().Name}* Commiting transaction");
+
+            return catalogItem;
+        }
+        catch (Exception ex)
+        {
+            _logger.LogError($"Error occurred while removing catalog item: {ex.Message}");
+            await transaction.RollbackAsync();
+            _logger.LogInformation($"*{GetType().Name}* Rolling back transaction");
+            throw;
+        }
     }
     
 }

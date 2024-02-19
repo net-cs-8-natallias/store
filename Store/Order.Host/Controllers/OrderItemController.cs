@@ -43,11 +43,11 @@ public class OrderItemController: ControllerBase
         return Ok(orderItemId);
     }
     
-    [HttpPut("order-items")]
-    public async Task<IActionResult> UpdateOrder(OrderItem orderItem)
+    [HttpPut("order-items/{id}")]
+    public async Task<IActionResult> UpdateOrder(int id, OrderItemDto orderItem)
     {
-        _logger.LogInformation($"*{GetType().Name}* request to update order-item with id: {orderItem.Id}");
-        var order = await _service.UpdateItem(orderItem);
+        _logger.LogInformation($"*{GetType().Name}* request to update order-item with id: {id}");
+        var order = await _service.UpdateItem(id, orderItem);
         return Ok(order);
     }
     
